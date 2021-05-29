@@ -1,4 +1,4 @@
-import * as PIXI from "pixi.js";
+import * as pixi from "pixi.js";
 import "./style.css";
 
 const resolution = {
@@ -6,11 +6,11 @@ const resolution = {
   height: 1080,
 };
 
-const app = new PIXI.Application({
+const app = new pixi.Application({
   backgroundColor: 0x63ace8,
   width: resolution.width,
   height: resolution.height,
-  antialias: true,
+  antialias: false,
 });
 
 const stage = app.stage;
@@ -31,10 +31,15 @@ window.onload = async (): Promise<void> => {
 
 async function loadGameAssets(): Promise<void> {
   return new Promise((res, rej) => {
-    const loader = PIXI.Loader.shared;
-    loader.add("rabbit", "./assets/simpleSpriteSheet.json");
+    const loader = pixi.Loader.shared;
+    const resourceName = "sprites"
+    loader.add(resourceName, "./assets/sprites.json");
 
     loader.onComplete.once(() => {
+      const texture = loader.resources[`${resourceName}_image`].texture;
+      if (texture) {
+        texture.baseTexture.scaleMode = pixi.SCALE_MODES.NEAREST;
+      }
       res();
     });
 
@@ -53,20 +58,20 @@ function resizeCanvas(): void {
   app.renderer.resize(resolution.width * scale, resolution.height * scale);
   app.stage.scale.x = scale;
   app.stage.scale.y = scale;
-  console.log(app.renderer.width);
 }
 
-function getBird(): PIXI.AnimatedSprite {
-  const bird = new PIXI.AnimatedSprite([
-    PIXI.Texture.from("birdUp.png"),
-    PIXI.Texture.from("birdMiddle.png"),
-    PIXI.Texture.from("birdDown.png"),
+function getBird(): pixi.AnimatedSprite {
+  const bird = new pixi.AnimatedSprite([
+    pixi.Texture.from("birdUp.png"),
+    pixi.Texture.from("birdMiddle.png"),
+    pixi.Texture.from("birdDown.png"),
   ]);
 
   bird.loop = true;
   bird.animationSpeed = 0.1;
   bird.play();
-  bird.scale.set(3);
+  bird.scale.set(5);
+  bird.scale;
 
   return bird;
 }
