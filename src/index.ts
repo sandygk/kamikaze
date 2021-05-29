@@ -7,7 +7,7 @@ const resolution = {
 };
 
 const app = new PIXI.Application({
-  backgroundColor: 0xaa0000,
+  backgroundColor: 0x63ace8,
   width: resolution.width,
   height: resolution.height,
   antialias: true,
