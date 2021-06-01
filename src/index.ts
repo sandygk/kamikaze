@@ -32,11 +32,11 @@ window.onload = async (): Promise<void> => {
 async function loadGameAssets(): Promise<void> {
   return new Promise((res, rej) => {
     const loader = pixi.Loader.shared;
-    const resourceName = "sprites"
-    loader.add(resourceName, "./assets/sprites.json");
+    const atlasPath = "./assets/atlasMap.json"
+    loader.add(atlasPath);
 
     loader.onComplete.once(() => {
-      const texture = loader.resources[`${resourceName}_image`].texture;
+      const texture = loader.resources[`${atlasPath}_image`].texture;
       if (texture) {
         texture.baseTexture.scaleMode = pixi.SCALE_MODES.NEAREST;
       }

@@ -92,7 +92,7 @@
     }
   },
   "meta": {
-    "image": "sprites.png",
+    "image": "tileset.png",
     "size": { "w": 300, "h": 298 },
     "scale": "1"
   }
