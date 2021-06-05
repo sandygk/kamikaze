@@ -1,4 +1,5 @@
 import * as pixi from "pixi.js";
+import { AnimatedSprite, Loader, Sprite, Texture } from "pixi.js";
 import "./style.css";
 
 const resolution = {
@@ -13,33 +14,37 @@ const app = new pixi.Application({
   antialias: false,
 });
 
-const stage = app.stage;
+const sprites: { plane?: AnimatedSprite } = {};
 
 window.onload = async (): Promise<void> => {
+  document.body.appendChild(app.view);
+  updateCanvasSize();
   await loadGameAssets();
 
-  document.body.appendChild(app.view);
-
-  resizeCanvas();
-  window.addEventListener("resize", resizeCanvas);
-
-  const birdFromSprite = getBird();
-  birdFromSprite.anchor.set(0.5, 0.5);
-  birdFromSprite.position.set(resolution.width / 2, resolution.height / 2);
-  stage.addChild(birdFromSprite);
+  app.stage.addChild(sprites.plane!);
 };
+
+function updateCanvasSize(): void {
+  const handleResize = () => {
+    const heightRatio = window.innerHeight / resolution.height;
+    const widthRatio = window.innerWidth / resolution.width;
+    const scale = Math.min(heightRatio, widthRatio);
+    app.renderer.resize(resolution.width * scale, resolution.height * scale);
+    app.stage.scale.x = scale;
+    app.stage.scale.y = scale;
+  };
+  handleResize();
+  window.addEventListener("resize", handleResize);
+
+}
 
 async function loadGameAssets(): Promise<void> {
   return new Promise((res, rej) => {
-    const loader = pixi.Loader.shared;
-    const atlasPath = "./assets/atlasMap.json"
-    loader.add(atlasPath);
+    const loader = Loader.shared;
+    const atlasMapPath = "./assets/atlasMap.json";
+    loader.add(atlasMapPath);
 
     loader.onComplete.once(() => {
-      const texture = loader.resources[`${atlasPath}_image`].texture;
-      if (texture) {
-        texture.baseTexture.scaleMode = pixi.SCALE_MODES.NEAREST;
-      }
       res();
     });
 
@@ -47,31 +52,20 @@ async function loadGameAssets(): Promise<void> {
       rej();
     });
 
-    loader.load();
+    loader.load(() => {
+      const texture = loader.resources[`${atlasMapPath}_image`].texture;
+      if (texture) {
+        texture.baseTexture.scaleMode = pixi.SCALE_MODES.NEAREST;
+      }
+      const plane = new AnimatedSprite([Texture.from("plane")]);
+      plane.loop = true;
+      plane.animationSpeed = 0.1;
+      plane.play();
+      plane.scale.set(5);
+      plane.anchor.set(0.5, 0.5);
+      plane.position.set(resolution.width / 2, resolution.height / 2);
+      sprites.plane = plane;
+    });
   });
 }
 
-function resizeCanvas(): void {
-  const heightRatio = window.innerHeight / resolution.height;
-  const widthRatio = window.innerWidth / resolution.width;
-  const scale = Math.min(heightRatio, widthRatio);
-  app.renderer.resize(resolution.width * scale, resolution.height * scale);
-  app.stage.scale.x = scale;
-  app.stage.scale.y = scale;
-}
-
-function getBird(): pixi.AnimatedSprite {
-  const bird = new pixi.AnimatedSprite([
-    pixi.Texture.from("birdUp.png"),
-    pixi.Texture.from("birdMiddle.png"),
-    pixi.Texture.from("birdDown.png"),
-  ]);
-
-  bird.loop = true;
-  bird.animationSpeed = 0.1;
-  bird.play();
-  bird.scale.set(5);
-  bird.scale;
-
-  return bird;
-}
