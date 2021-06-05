@@ -1,5 +1,5 @@
 import * as pixi from "pixi.js";
-import { AnimatedSprite, Loader, Sprite, Texture } from "pixi.js";
+import { AnimatedSprite, Loader, Texture } from "pixi.js";
 import "./style.css";
 
 const resolution = {
