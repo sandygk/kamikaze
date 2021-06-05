@@ -17,6 +17,9 @@ module.exports = (env) => {
     devtool: "inline-source-map",
 
     devServer: {
+      client: {
+        overlay: false,
+      },
       open: true,
     },
 
