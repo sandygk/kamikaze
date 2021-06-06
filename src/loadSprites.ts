@@ -1,10 +1,10 @@
-import { AnimatedSprite, Loader, SCALE_MODES, Texture } from "pixi.js";
-import { sprites } from "./store";
+import { AnimatedSprite, Loader, SCALE_MODES, Texture } from 'pixi.js';
+import { sprites } from './store';
 
 export async function loadSprites(): Promise<void> {
   return new Promise((res, rej) => {
     const loader = Loader.shared;
-    const atlasMapPath = "./assets/atlasMap.json";
+    const atlasMapPath = './assets/atlasMap.json';
     loader.add(atlasMapPath);
 
     loader.onComplete.once(() => {
@@ -20,7 +20,7 @@ export async function loadSprites(): Promise<void> {
       if (texture) {
         texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
       }
-      const plane = new AnimatedSprite([Texture.from("plane")]);
+      const plane = new AnimatedSprite([Texture.from('plane')]);
       plane.loop = true;
       plane.animationSpeed = 0.1;
       plane.play();
@@ -30,4 +30,3 @@ export async function loadSprites(): Promise<void> {
     });
   });
 }
-

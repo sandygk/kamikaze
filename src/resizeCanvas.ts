@@ -1,4 +1,4 @@
-import { app, resolution } from "./store";
+import { app, resolution } from './store';
 
 export const resizeCanvas = (): void => {
   const handleResize = () => {
@@ -10,6 +10,5 @@ export const resizeCanvas = (): void => {
     app.stage.scale.y = scale;
   };
   handleResize();
-  window.addEventListener("resize", handleResize);
-}
-
+  window.addEventListener('resize', handleResize);
+};

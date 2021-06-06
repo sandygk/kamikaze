@@ -1,4 +1,4 @@
-import { app, resolution, sprites } from "./store";
+import { app, inputs, resolution, sprites } from './store';
 
 const init = () => {
   const plane = sprites.plane!;
@@ -7,7 +7,10 @@ const init = () => {
 };
 
 const update = (delta: number) => {
-  sprites.plane!.rotation -= 0.01 * delta;
+  let direction = 0;
+  if (inputs.turnLeft) direction += 1;
+  if (inputs.turnRight) direction -= 1;
+  sprites.plane!.rotation -= direction * 0.06 * delta;
 };
 
 export default {

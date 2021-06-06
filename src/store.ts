@@ -1,5 +1,5 @@
-import { AnimatedSprite, Application } from "pixi.js";
-import { Dimensions } from "./types";
+import { AnimatedSprite, Application } from 'pixi.js';
+import { Dimensions } from './types';
 
 export const sprites: { plane?: AnimatedSprite } = {};
 
@@ -14,3 +14,10 @@ export const app = new Application({
   height: resolution.height,
   antialias: false,
 });
+
+export const inputs = {
+  turnLeft: false,
+  turnRight: false,
+  moveForward: false,
+  fire: false,
+};
