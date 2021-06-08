@@ -1,5 +1,6 @@
 import { Application } from 'pixi.js';
 import { Dimensions, Player } from './types';
+import { UP } from './utils/math';
 
 export const resolution: Dimensions = {
   width: 1920,
@@ -28,7 +29,8 @@ export const PLAYER_DRAG_FORCE = 2;
 
 export const player: Player = {
   position: { x: 500, y: 500 },
-  rotation: -Math.PI / 2,
+  facingDirection: UP,
+  motionDirection: UP,
   speed: PLAYER_MIN_SPEED,
 };
 

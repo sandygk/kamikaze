@@ -123,11 +123,6 @@ export const rotateTo = (vector: Vector, rotation: number) => {
   return rotate(vector, rotation - getAngle(vector));
 };
 
-export const rotateBy = (vector: Vector, rotation: number) => {
-  const newAngle = getAngle(vector) + rotation;
-  return rotate(vector, newAngle);
-};
-
 export const setLength = (vector: Vector, length: number) => {
   const angle = getAngle(vector);
   vector.x = Math.cos(angle) * length;
