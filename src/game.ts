@@ -1,6 +1,7 @@
-import { app, inputs, player, PLAYER_ROTATION_SPEED } from './store';
+import { app, auxVector, inputs, player, PLAYER_ROTATION_SPEED } from './store';
 import math from './utils/math';
-import vector from './utils/vector'
+import * as vector from './utils/vector';
+import { add, multiplyScalar, rotate, setToRight } from './utils/vector';
 
 const init = () => {
   app.stage.addChild(player.sprite!);
@@ -24,10 +25,11 @@ function updatePlayer(delta: number) {
     rotationDirection * math.TAU * PLAYER_ROTATION_SPEED * delta;
 
   //update position
-  const displacement = vector.getRightVector();
-  vector.rotate(displacement, player.rotation);
-  vector.multiplyScalar(displacement, player.speed * delta);
-  vector.add(player.position, displacement)
+  const displacement = auxVector;
+  setToRight(displacement);
+  rotate(displacement, player.rotation);
+  multiplyScalar(displacement, player.speed * delta);
+  add(player.position, displacement);
 
   //update sprite
   player.sprite!.rotation = player.rotation + Math.PI / 2;

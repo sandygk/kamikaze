@@ -31,3 +31,6 @@ export const player: Player = {
   rotation: -Math.PI / 2,
   speed: PLAYER_MIN_SPEED,
 };
+
+/** Auxiliary vector for update computations to avoid generating memory garbage */
+export const auxVector = { x: 0, y: 0 };
