@@ -1,5 +1,5 @@
 import { AnimatedSprite, Loader, SCALE_MODES, Texture } from 'pixi.js';
-import { sprites } from './store';
+import { player } from './store';
 
 export async function loadSprites(): Promise<void> {
   return new Promise((res, rej) => {
@@ -26,7 +26,7 @@ export async function loadSprites(): Promise<void> {
       plane.play();
       plane.scale.set(5);
       plane.anchor.set(0.5, 0.5);
-      sprites.plane = plane;
+      player.sprite = plane;
     });
   });
 }

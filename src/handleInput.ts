@@ -2,9 +2,9 @@ import { inputs } from './store';
 
 export const handleInput = (): void => {
   const trackInput = (key: string, pressed: boolean) => {
-    if (key === 'ArrowLeft') inputs.turnLeft = pressed;
-    if (key === 'ArrowRight') inputs.turnRight = pressed;
-    if (key === 'ArrowUp') inputs.moveForward = pressed;
+    if (key === 'ArrowLeft') inputs.turnCounterclockwise = pressed;
+    if (key === 'ArrowRight') inputs.turnClockwise = pressed;
+    if (key === 'ArrowUp') inputs.accelerate = pressed;
     if (key === 'Space') inputs.fire = pressed;
   };
 
