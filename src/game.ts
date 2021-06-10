@@ -10,7 +10,14 @@ import { DOWN, TAU } from './utils/math';
 
 const init = () => {
   app.stage.addChild(player.sprite!);
-  app.stage.addChild(cloudSprites[0]);
+  cloudSprites.forEach((cloudSprite) => {
+    cloudSprite.position.set(
+      Math.random() * 10000 - 500,
+      Math.random() * 10000 - 500
+    );
+    app.stage.addChild(cloudSprite);
+    console.log(cloudSprite);
+  });
 };
 
 const update = (delta: number) => {

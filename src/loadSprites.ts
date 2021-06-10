@@ -29,10 +29,12 @@ export async function loadSprites(): Promise<void> {
       airplaneSprite.anchor.set(0.5, 0.5);
       player.sprite = airplaneSprite;
 
-      const cloudSprite = new Sprite(Texture.from('cloud'));
-      cloudSprite.scale.set(5);
-      cloudSprite.alpha = 0.5;
-      cloudSprites.push(cloudSprite);
+      for (let i = 0; i < 100; i++) {
+        const cloudSprite = new Sprite(Texture.from('cloud'));
+        cloudSprite.scale.set(5);
+        cloudSprite.alpha = 0.5;
+        cloudSprites.push(cloudSprite);
+      }
     });
   });
 
