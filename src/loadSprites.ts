@@ -32,7 +32,7 @@ export async function loadSprites(): Promise<void> {
       for (let i = 0; i < 100; i++) {
         const cloudSprite = new Sprite(Texture.from('cloud'));
         cloudSprite.scale.set(5);
-        cloudSprite.alpha = 0.5;
+        cloudSprite.alpha = 0.7;
         cloudSprites.push(cloudSprite);
       }
     });
