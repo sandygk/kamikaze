@@ -1,6 +1,7 @@
 import { Application } from 'pixi.js';
 import { Dimensions, Player } from './types';
 import { UP } from './utils/math';
+import { Vector } from './utils/Vector';
 
 export const resolution: Dimensions = {
   width: 1920,
@@ -28,11 +29,11 @@ export const PLAYER_ACCELERATION_FORCE = 4;
 export const PLAYER_DRAG_FORCE = 2;
 
 export const player: Player = {
-  position: { x: 500, y: 500 },
+  position: new Vector(500, 500),
   facingDirection: UP,
   motionDirection: UP,
   speed: PLAYER_MIN_SPEED,
 };
 
 /** Auxiliary vector for update computations to avoid generating memory garbage */
-export const auxVector = { x: 0, y: 0 };
+export const auxVector = new Vector(500, 500);
