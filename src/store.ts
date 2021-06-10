@@ -1,4 +1,4 @@
-import { Application } from 'pixi.js';
+import { Application, Sprite } from 'pixi.js';
 import { Dimensions, Player } from './types';
 import { UP } from './utils/math';
 import { Vector } from './utils/Vector';
@@ -37,3 +37,5 @@ export const player: Player = {
 
 /** Auxiliary vector for update computations to avoid generating memory garbage */
 export const auxVector = new Vector(500, 500);
+
+export const cloudSprites: Sprite[] = [];

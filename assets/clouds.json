@@ -1,11 +1,11 @@
 {
   "frames": {
-    "plane": {
-      "frame": { "x": 0, "y": 0, "w": 11, "h": 15 }
+    "cloud": {
+      "frame": { "x": 0, "y": 0, "w": 90, "h": 45 }
     }
   },
   "meta": {
-    "image": "tileset.png",
+    "image": "clouds.png",
     "size": { "w": 300, "h": 298 },
     "scale": "1"
   }

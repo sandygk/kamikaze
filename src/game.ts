@@ -1,9 +1,16 @@
-import { app, auxVector, inputs, player, PLAYER_ROTATION_SPEED } from './store';
+import {
+  app,
+  auxVector,
+  cloudSprites,
+  inputs,
+  player,
+  PLAYER_ROTATION_SPEED,
+} from './store';
 import { DOWN, TAU } from './utils/math';
-import { Vector } from './utils/Vector';
 
 const init = () => {
   app.stage.addChild(player.sprite!);
+  app.stage.addChild(cloudSprites[0]);
 };
 
 const update = (delta: number) => {
