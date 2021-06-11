@@ -14,8 +14,8 @@ const init = () => {
   app.stage.addChild(player.sprite!);
   cloudSprites.forEach((cloudSprite) => {
     cloudSprite.position.set(
-      Math.random() * 10000 - 500,
-      Math.random() * 10000 - 500
+      (Math.random() - 0.5) * resolution.height * 80,
+      (Math.random() - 0.5) * resolution.width * 80
     );
     app.stage.addChild(cloudSprite);
   });
@@ -53,9 +53,5 @@ const updatePlayer = (delta: number) => {
 
   //update camera
   camera.position.copyFrom(player.position);
-  app.stage.position.set(
-    app.renderer.screen.width / 2,
-    app.renderer.screen.height / 2
-  );
   app.stage.pivot.set(player.position.x, player.position.y);
 };

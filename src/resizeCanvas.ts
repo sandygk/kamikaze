@@ -8,6 +8,9 @@ export const resizeCanvas = (): void => {
     app.renderer.resize(resolution.width * scale, resolution.height * scale);
     app.stage.scale.x = scale;
     app.stage.scale.y = scale;
+
+    // place the stage pivot in the center of the screen
+    app.stage.position.set(app.screen.width / 2, app.screen.height / 2);
   };
   handleResize();
   window.addEventListener('resize', handleResize);

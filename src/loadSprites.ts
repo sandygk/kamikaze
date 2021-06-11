@@ -29,7 +29,7 @@ export async function loadSprites(): Promise<void> {
       airplaneSprite.anchor.set(0.5, 0.5);
       player.sprite = airplaneSprite;
 
-      for (let i = 0; i < 100; i++) {
+      for (let i = 0; i < 10000; i++) {
         const cloudSprite = new Sprite(Texture.from('cloud'));
         cloudSprite.scale.set(5);
         cloudSprite.alpha = 0.7;
