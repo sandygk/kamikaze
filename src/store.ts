@@ -29,13 +29,17 @@ export const PLAYER_ACCELERATION_FORCE = 4;
 export const PLAYER_DRAG_FORCE = 2;
 
 export const player: Player = {
-  position: new Vector(500, 500),
+  position: new Vector(),
   facingDirection: UP,
   motionDirection: UP,
   speed: PLAYER_MIN_SPEED,
 };
 
+export const camera = {
+  position: new Vector(),
+};
+
 /** Auxiliary vector for update computations to avoid generating memory garbage */
-export const auxVector = new Vector(500, 500);
+export const auxVector = new Vector();
 
 export const cloudSprites: Sprite[] = [];

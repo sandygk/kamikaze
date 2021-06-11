@@ -1,14 +1,22 @@
 /** 2d Vector class with support for vector operations */
 export class Vector {
-  /** `x` component of the vector*/
+  /** `x` component of the vector.*/
   x: number;
-  /** `y` component of the vector*/
+  /** `y` component of the vector.*/
   y: number;
 
-  /** Creates and initialize and instance of the vector class*/
+  /** Creates and initialize and instance of the vector class.*/
   constructor(x = 0, y = 0) {
     this.x = x;
     this.y = y;
+  }
+
+  /**
+  Creates a new vector with the same `x` and `y` components as `this.`
+  @return The cloned vector.
+  */
+  clone() {
+    return new Vector(this.x, this.y);
   }
 
   /**
@@ -18,6 +26,18 @@ export class Vector {
   set(x: number, y: number) {
     this.x = x;
     this.y = y;
+    return this;
+  }
+
+  /**
+  Utility function to conveniently set the values of the fields `x` and `y`
+  of `this` vector from another vector.
+  @params The vector to copy from.
+  @returns The modified `this` vector.
+  */
+  copyFrom(vector: Vector) {
+    this.x = vector.x;
+    this.y = vector.y;
     return this;
   }
 

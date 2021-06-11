@@ -1,10 +1,12 @@
 import {
   app,
   auxVector,
+  camera,
   cloudSprites,
   inputs,
   player,
   PLAYER_ROTATION_SPEED,
+  resolution,
 } from './store';
 import { DOWN, TAU } from './utils/math';
 
@@ -49,4 +51,11 @@ const updatePlayer = (delta: number) => {
   //update sprite
   player.sprite!.rotation = player.facingDirection + DOWN;
   player.sprite!.position.set(player.position.x, player.position.y);
+
+  //update camera
+  camera.position.copyFrom(player.position);
+  app.stage.position.set(
+    -(camera.position.x - resolution.width / 2),
+    -(camera.position.y - resolution.height / 2)
+  );
 };
