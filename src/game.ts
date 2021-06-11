@@ -18,7 +18,6 @@ const init = () => {
       Math.random() * 10000 - 500
     );
     app.stage.addChild(cloudSprite);
-    console.log(cloudSprite);
   });
 };
 
