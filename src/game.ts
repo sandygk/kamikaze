@@ -54,7 +54,8 @@ const updatePlayer = (delta: number) => {
   //update camera
   camera.position.copyFrom(player.position);
   app.stage.position.set(
-    -(camera.position.x - resolution.width / 2),
-    -(camera.position.y - resolution.height / 2)
+    app.renderer.screen.width / 2,
+    app.renderer.screen.height / 2
   );
+  app.stage.pivot.set(player.position.x, player.position.y);
 };
