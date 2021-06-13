@@ -5,6 +5,7 @@ export type Dimensions = { width: number; height: number };
 
 export type Player = {
   position: Vector;
+  rotationSpeed: number;
   /** The direction that the player is facing */
   facingDirection: number;
   /** The direction of the motion */

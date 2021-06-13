@@ -6,7 +6,9 @@ import {
   cloudSprites,
   inputs,
   player,
-  PLAYER_ROTATION_SPEED,
+  PLAYER_MAX_ROTATION_SPEED,
+  PLAYER_ROTATION_ACCELERATION,
+  PLAYER_ROTATION_DECELERATION,
   resolution,
 } from './state';
 import './style.css';
@@ -45,26 +47,25 @@ window.onload = async (): Promise<void> => {
   }
   /* load and place sprites */ {
     await new Promise<void>((res, rej) => {
-      const loader = Loader.shared;
       const airplanesPath = './assets/airplanes.json';
       const cloudsPath = './assets/clouds.json';
-      loader.add([airplanesPath, cloudsPath]);
-      loader.onComplete.once(() => {
-        res();
-      });
-      loader.onError.once(() => {
-        rej();
-      });
+      const loader = app.loader;
+      /* setup loader*/ {
+        loader.add([airplanesPath, cloudsPath]);
+        loader.onComplete.once(() => { res(); });
+        loader.onError.once(() => { rej(); });
+      }
       loader.load(() => {
-        const setScaleModeToNearest = (loader: Loader, path: string) => {
-          const texture = loader.resources[`${path}_image`].texture;
-          if (texture) {
-            texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
-          }
-        };
-        setScaleModeToNearest(loader, airplanesPath);
-        setScaleModeToNearest(loader, cloudsPath);
-
+        /* set scale mode to nearest*/{
+          const setScaleModeToNearest = (loader: Loader, path: string) => {
+            const texture = loader.resources[`${path}_image`].texture;
+            if (texture) {
+              texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+            }
+          };
+          setScaleModeToNearest(loader, airplanesPath);
+          setScaleModeToNearest(loader, cloudsPath);
+        }
         /* init player sprite */ {
           const airplaneSprite = new AnimatedSprite([Texture.from('airplane')]);
           airplaneSprite.loop = true;
@@ -92,28 +93,44 @@ window.onload = async (): Promise<void> => {
     });
   }
   /* update loop */ {
-    app.ticker.add((delta) => {
-      delta /= 60;
+    app.ticker.add((dt) => {
+      dt /= 60;
       /* update player */ {
-        //update facingDirection
-        let sign = 0;
-        if (inputs.turnCounterclockwise) sign -= 1;
-        if (inputs.turnClockwise) sign += 1;
-        player.facingDirection += sign * TAU * PLAYER_ROTATION_SPEED * delta;
+        /* update rotation */ {
+          //compute input rotation sign
+          let inputRotationSign = 0;
+          if (inputs.turnClockwise) inputRotationSign += 1;
+          if (inputs.turnCounterclockwise) inputRotationSign -= 1;
 
-        //update motionDirection
-        if (inputs.accelerate) player.motionDirection = player.facingDirection;
+          // accelerate/decelerate rotation
+          if (inputRotationSign)
+            player.rotationSpeed += inputRotationSign * PLAYER_ROTATION_ACCELERATION * dt;
+          else {
+            player.rotationSpeed += -Math.sign(player.rotationSpeed) * PLAYER_ROTATION_DECELERATION * dt;
+          }
 
-        //update position
-        const displacement = auxVector
-          .setToRight()
-          .rotateTo(player.motionDirection)
-          .multiplyScalar(player.speed * delta);
-        player.position.add(displacement);
+          //clamp rotation speed
+          if (Math.abs(player.rotationSpeed) > PLAYER_MAX_ROTATION_SPEED)
+            player.rotationSpeed = Math.sign(player.rotationSpeed) * PLAYER_MAX_ROTATION_SPEED;
 
-        //update sprite
-        player.sprite!.rotation = player.facingDirection + DOWN;
-        player.sprite!.position.set(player.position.x, player.position.y);
+          //update facing and motion direction
+          player.facingDirection += player.rotationSpeed * dt * TAU;
+
+          //update motionDirection
+          if (inputs.accelerate)
+            player.motionDirection = player.facingDirection;
+        }
+        /* update position */ {
+          const displacement = auxVector
+            .setToRight()
+            .rotateTo(player.motionDirection)
+            .multiplyScalar(player.speed * dt);
+          player.position.add(displacement);
+        }
+        /* update sprite */ {
+          player.sprite!.rotation = player.facingDirection + DOWN;
+          player.sprite!.position.set(player.position.x, player.position.y);
+        }
       }
       /* update camera */ {
         camera.position.copyFrom(player.position);
