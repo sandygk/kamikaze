@@ -115,10 +115,10 @@ window.onload = async (): Promise<void> => {
           if (Math.abs(player.rotationSpeed) > PLAYER_MAX_ROTATION_SPEED)
             player.rotationSpeed = Math.sign(player.rotationSpeed) * PLAYER_MAX_ROTATION_SPEED;
 
-          //update facing and motion direction
+          //update facing direction
           player.facingDirection += player.rotationSpeed * dt * TAU;
 
-          //update motionDirection
+          //update motion direction
           if (inputs.accelerate)
             player.motionDirection = player.facingDirection;
         }
