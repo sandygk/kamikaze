@@ -106,7 +106,9 @@ window.onload = async (): Promise<void> => {
           if (inputRotationSign)
             player.rotationSpeed += inputRotationSign * PLAYER_ROTATION_ACCELERATION * dt;
           else {
-            player.rotationSpeed += -Math.sign(player.rotationSpeed) * PLAYER_ROTATION_DECELERATION * dt;
+            const deltaRotationSpeed = Math.sign(player.rotationSpeed) * PLAYER_ROTATION_DECELERATION * dt;
+            if (Math.abs(player.rotationSpeed) < deltaRotationSpeed) player.rotationSpeed = 0;
+            else player.rotationSpeed -= deltaRotationSpeed;
           }
 
           //clamp rotation speed

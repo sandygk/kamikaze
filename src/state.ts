@@ -26,11 +26,9 @@ export const PLAYER_MIN_SPEED = 600;
 export const PLAYER_MAX_SPEED = 10;
 export const PLAYER_ACCELERATION = 4;
 export const PLAYER_DECELERATION = 2;
-export const PLAYER_ROTATION_ACCELERATION = 4;
+export const PLAYER_ROTATION_ACCELERATION = 5;
 export const PLAYER_ROTATION_DECELERATION = 2;
 export const PLAYER_MAX_ROTATION_SPEED = 1;
-
-
 
 export const player: Player = {
   position: new Vector(),
