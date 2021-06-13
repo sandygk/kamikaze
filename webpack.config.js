@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 
-const path = require("path");
+const path = require('path');
 
-const merge = require("webpack-merge").merge;
+const merge = require('webpack-merge').merge;
 
 // plugins
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const CopyPlugin = require("copy-webpack-plugin");
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = (env) => {
   const config = {
-    entry: "./src/index.ts",
+    entry: './src/main.ts',
 
     resolve: {
-      extensions: [".ts", ".tsx", ".js", ".json"],
+      extensions: ['.ts', '.tsx', '.js', '.json'],
     },
 
     module: {
@@ -25,14 +25,14 @@ module.exports = (env) => {
             {
               loader: MiniCssExtractPlugin.loader,
             },
-            "css-loader",
+            'css-loader',
           ],
         },
       ],
     },
     optimization: {
       splitChunks: {
-        chunks: "all",
+        chunks: 'all',
       },
     },
 
@@ -41,11 +41,11 @@ module.exports = (env) => {
       new CopyPlugin({
         patterns: [
           {
-            from: "assets/**",
+            from: 'assets/**',
 
             // if there are nested subdirectories , keep the hierarchy
             transformPath(targetPath, absolutePath) {
-              const assetsPath = path.resolve(__dirname, "assets");
+              const assetsPath = path.resolve(__dirname, 'assets');
               const endpPath = absolutePath.slice(assetsPath.length);
 
               return Promise.resolve(`assets/${endpPath}`);
