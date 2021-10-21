@@ -1,3 +1,5 @@
+import { ObservablePoint } from "@pixi/math";
+
 /** 2d Vector class with support for vector operations */
 export class Vector {
   /** `x` component of the vector.*/
@@ -62,7 +64,7 @@ export class Vector {
   @returns the modified `this` vector.
   */
   setToUp() {
-    return this.set(0, 1);
+    return this.set(0, -1);
   }
 
   /**
@@ -70,7 +72,7 @@ export class Vector {
   @returns the modified `this` vector.
   */
   setToDown() {
-    return this.set(0, -1);
+    return this.set(0, 1);
   }
 
   /**
@@ -299,4 +301,16 @@ export class Vector {
     }
     return this;
   }
+
+  /**
+   * Copies a Vector to an ObservablePoint
+   * @argument vector The vector to copy from
+   * @argument point The point to copy to
+   * @returns The modified point
+  */
+  toObservablePoint(point: ObservablePoint) {
+    return point.set(this.x, this.y);
+  }
 }
+
+

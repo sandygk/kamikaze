@@ -18,24 +18,33 @@ export const app = new Application({
 export const inputs = {
   turnCounterclockwise: false,
   turnClockwise: false,
-  accelerate: false,
+  turbo: false,
   fire: false,
 };
 
-export const PLAYER_MIN_SPEED = 600;
-export const PLAYER_MAX_SPEED = 10;
-export const PLAYER_ACCELERATION = 4;
-export const PLAYER_DECELERATION = 2;
-export const PLAYER_ROTATION_ACCELERATION = 5;
-export const PLAYER_ROTATION_DECELERATION = 2;
-export const PLAYER_MAX_ROTATION_SPEED = 1;
+
+export const PLAYER_GLIDE_ANGULAR_ACCELERATION = 5;
+export const PLAYER_GLIDE_ANGULAR_DECELERATION = 2;
+export const PLAYER_GLIDE_MAX_ANGULAR_SPEED = 1.1;
+
+export const PLAYER_TURBO_ANGULAR_ACCELERATION = 2;
+export const PLAYER_TURBO_ANGULAR_DECELERATION = 5;
+export const PLAYER_TURBO_MAX_ANGULAR_SPEED = .3;
+
+export const PLAYER_GLIDE_ACCELERATION = 1;
+export const PLAYER_GLIDE_MAX_SPEED = 600;
+
+export const PLAYER_TURBO_ACCELERATION = 1000;
+export const PLAYER_TURBO_MAX_SPEED = 1300;
+
+export const PLAYER_DECELERATION = 300;
+
 
 export const player: Player = {
   position: new Vector(),
-  rotationSpeed: 0,
-  facingDirection: UP,
-  motionDirection: UP,
-  speed: PLAYER_MIN_SPEED,
+  angularSpeed: 0,
+  direction: UP,
+  velocity: new Vector().setToUp().multiplyScalar(PLAYER_GLIDE_MAX_SPEED),
 };
 
 export const camera = {

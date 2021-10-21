@@ -6,10 +6,17 @@ import {
   cloudSprites,
   inputs,
   player,
-  PLAYER_MAX_ROTATION_SPEED,
-  PLAYER_ROTATION_ACCELERATION,
-  PLAYER_ROTATION_DECELERATION,
+  PLAYER_DECELERATION,
+  PLAYER_GLIDE_MAX_ANGULAR_SPEED,
+  PLAYER_GLIDE_ANGULAR_ACCELERATION,
+  PLAYER_GLIDE_ANGULAR_DECELERATION,
+  PLAYER_TURBO_ACCELERATION,
+  PLAYER_TURBO_MAX_ANGULAR_SPEED,
+  PLAYER_TURBO_MAX_SPEED,
+  PLAYER_TURBO_ANGULAR_ACCELERATION,
+  PLAYER_TURBO_ANGULAR_DECELERATION,
   resolution,
+  PLAYER_GLIDE_ACCELERATION,
 } from './state';
 import './style.css';
 import { DOWN, TAU } from './utils/math';
@@ -35,7 +42,7 @@ window.onload = async (): Promise<void> => {
     const setInputState = (key: string, pressed: boolean) => {
       if (key === 'ArrowLeft') inputs.turnCounterclockwise = pressed;
       if (key === 'ArrowRight') inputs.turnClockwise = pressed;
-      if (key === 'ArrowUp') inputs.accelerate = pressed;
+      if (key === 'ArrowUp') inputs.turbo = pressed;
       if (key === 'Space') inputs.fire = pressed;
     };
     window.addEventListener('keydown', (event: any) => {
@@ -71,13 +78,13 @@ window.onload = async (): Promise<void> => {
           airplaneSprite.loop = true;
           airplaneSprite.animationSpeed = 0.1;
           airplaneSprite.play();
-          airplaneSprite.scale.set(5);
+          airplaneSprite.scale.set(3);
           airplaneSprite.anchor.set(0.5, 0.5);
           player.sprite = airplaneSprite;
           app.stage.addChild(player.sprite!);
         }
         /* init cloud sprites */ {
-          for (let i = 0; i < 10000; i++) {
+          for (let i = 0; i < 20000; i++) {
             const cloudSprite = new Sprite(Texture.from('cloud'));
             cloudSprite.scale.set(5);
             cloudSprite.alpha = 0.7;
@@ -97,46 +104,92 @@ window.onload = async (): Promise<void> => {
       dt /= 60;
       /* update player */ {
         /* update rotation */ {
-          //compute input rotation sign
-          let inputRotationSign = 0;
-          if (inputs.turnClockwise) inputRotationSign += 1;
-          if (inputs.turnCounterclockwise) inputRotationSign -= 1;
-
-          // accelerate/decelerate rotation
-          if (inputRotationSign)
-            player.rotationSpeed += inputRotationSign * PLAYER_ROTATION_ACCELERATION * dt;
-          else {
-            const deltaRotationSpeed = Math.sign(player.rotationSpeed) * PLAYER_ROTATION_DECELERATION * dt;
-            if (Math.abs(player.rotationSpeed) < deltaRotationSpeed) player.rotationSpeed = 0;
-            else player.rotationSpeed -= deltaRotationSpeed;
+          /* compute input rotation sign */
+          let inputRotationSign; {
+            inputRotationSign = 0
+            if (inputs.turnClockwise) inputRotationSign += 1;
+            if (inputs.turnCounterclockwise) inputRotationSign -= 1;
           }
-
-          //clamp rotation speed
-          if (Math.abs(player.rotationSpeed) > PLAYER_MAX_ROTATION_SPEED)
-            player.rotationSpeed = Math.sign(player.rotationSpeed) * PLAYER_MAX_ROTATION_SPEED;
-
-          //update facing direction
-          player.facingDirection += player.rotationSpeed * dt * TAU;
-
-          //update motion direction
-          if (inputs.accelerate)
-            player.motionDirection = player.facingDirection;
+          /* accelerate/decelerate rotation */ {
+            if (inputRotationSign) {
+              const rotationAcceleration = inputs.turbo ?
+                PLAYER_TURBO_ANGULAR_ACCELERATION :
+                PLAYER_GLIDE_ANGULAR_ACCELERATION;
+              player.angularSpeed += inputRotationSign * rotationAcceleration * dt;
+            }
+            else {
+              const rotationDeceleration = inputs.turbo ?
+                PLAYER_TURBO_ANGULAR_DECELERATION :
+                PLAYER_GLIDE_ANGULAR_DECELERATION;
+              const deltaRotationSpeed = Math.sign(player.angularSpeed) * rotationDeceleration * dt;
+              if (Math.abs(player.angularSpeed) < deltaRotationSpeed) player.angularSpeed = 0;
+              else player.angularSpeed -= deltaRotationSpeed;
+            }
+          }
+          /* clamp rotation speed */ {
+            const maxRotationSpeed = inputs.turbo ?
+              PLAYER_TURBO_MAX_ANGULAR_SPEED :
+              PLAYER_GLIDE_MAX_ANGULAR_SPEED;
+            if (Math.abs(player.angularSpeed) > maxRotationSpeed)
+              player.angularSpeed = Math.sign(player.angularSpeed) * maxRotationSpeed;
+          }
+          /* update direction*/ {
+            player.direction += player.angularSpeed * dt * TAU;
+          }
         }
         /* update position */ {
-          const displacement = auxVector
-            .setToRight()
-            .rotateTo(player.motionDirection)
-            .multiplyScalar(player.speed * dt);
-          player.position.add(displacement);
+          /* decelerate velocity (apply drag) */ {
+            const deltaVelocity = PLAYER_DECELERATION * dt;
+            if (Math.abs(player.velocity.x) <= deltaVelocity) player.velocity.x = 0;
+            else player.velocity.x += -Math.sign(player.velocity.x) * deltaVelocity;
+            if (Math.abs(player.velocity.y) <= deltaVelocity) player.velocity.y = 0;
+            else player.velocity.y += -Math.sign(player.velocity.y) * deltaVelocity;
+          }
+
+          /* accelerate velocity */ {
+            const deltaVelocity = auxVector
+              .setToUp()
+              .rotateTo(player.direction)
+              .multiplyScalar(inputs.turbo ?
+                PLAYER_TURBO_ACCELERATION :
+                PLAYER_GLIDE_ACCELERATION)
+              .multiplyScalar(dt);
+            player.velocity.add(deltaVelocity);
+          }
+
+          /* clamp velocity*/ {
+            player.velocity.clamp(PLAYER_TURBO_MAX_SPEED);
+          }
+
+          /* update position */ {
+            const displacement = auxVector
+              .copyFrom(player.velocity)
+              .multiplyScalar(dt)
+            player.position.add(displacement);
+          }
         }
         /* update sprite */ {
-          player.sprite!.rotation = player.facingDirection + DOWN;
+          player.sprite!.rotation = player.direction + DOWN;
           player.sprite!.position.set(player.position.x, player.position.y);
         }
       }
       /* update camera */ {
-        camera.position.copyFrom(player.position);
-        app.stage.pivot.set(player.position.x, player.position.y);
+        //const target = auxVector
+        //  .setToRight()
+        //  .rotateTo(player.direction)
+        //  .multiplyScalar(400)
+        //  .add(player.position);
+
+        ////Linearly interpolate camera.position with target:
+        ////formula: A*t + B*(1 - t)
+        //const t = 0.07;
+        //const scaledTarget = target.multiplyScalar(t);
+        //camera.position
+        //  .multiplyScalar(1 - t)
+        //  .add(scaledTarget)
+
+        camera.position.copyFrom(player.position)
+        camera.position.toObservablePoint(app.stage.pivot);
       }
     });
   }
