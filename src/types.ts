@@ -3,7 +3,6 @@
 import { AnimatedSprite } from 'pixi.js';
 import { Vector } from './utils/Vector';
 
-
 /** Defines all the players' data*/
 export type Player = {
   /** Speed at which the player is rotating. */
