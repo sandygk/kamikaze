@@ -1,3 +1,5 @@
+// This file contains a set of Math functions and constants
+
 export const rad2deg = (rad: number) => {
   return (rad * 180) / PI;
 };

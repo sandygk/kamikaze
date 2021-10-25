@@ -1,3 +1,5 @@
+// This file contains all the logic of the game.
+
 import { AnimatedSprite, Loader, SCALE_MODES, Sprite, Texture } from 'pixi.js';
 import {
   app,
@@ -6,6 +8,9 @@ import {
   cloudSprites,
   inputs,
   player,
+  resolution,
+} from './state';
+import {
   PLAYER_DECELERATION,
   PLAYER_GLIDE_MAX_ANGULAR_SPEED,
   PLAYER_GLIDE_ANGULAR_ACCELERATION,
@@ -15,13 +20,12 @@ import {
   PLAYER_TURBO_MAX_SPEED,
   PLAYER_TURBO_ANGULAR_ACCELERATION,
   PLAYER_TURBO_ANGULAR_DECELERATION,
-  resolution,
   PLAYER_GLIDE_ACCELERATION,
-} from './state';
+} from './constants';
 import './style.css';
 import { DOWN, TAU } from './utils/math';
 
-window.onload = async (): Promise<void> => {
+window.onload = async () => {
   document.body.appendChild(app.view);
   /* handle screen resize */ {
     const handleResize = () => {

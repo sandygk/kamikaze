@@ -1,8 +1,10 @@
+// This file contains all the types of the game.
+
 import { AnimatedSprite } from 'pixi.js';
 import { Vector } from './utils/Vector';
 
-export type Dimensions = { width: number; height: number };
 
+/** Defines all the players' data*/
 export type Player = {
   /** Speed at which the player is rotating. */
   angularSpeed: number;

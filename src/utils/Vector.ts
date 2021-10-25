@@ -1,6 +1,11 @@
+// This file contains an implementation of a vector class
+
 import { ObservablePoint } from "@pixi/math";
 
-/** 2d Vector class with support for vector operations */
+/** 2d Vector class with support for vector operations.
+ * The class is designed with memory efficiency in mind,
+ * to avoid polluting the heap with vector instances.
+*/
 export class Vector {
   /** `x` component of the vector.*/
   x: number;
@@ -32,7 +37,7 @@ export class Vector {
   }
 
   /**
-  Utility function to conveniently set the values of the fields `x` and `y`
+  Utility function to conveniently copy the values of the fields `x` and `y`
   of `this` vector from another vector.
   @params The vector to copy from.
   @returns The modified `this` vector.
