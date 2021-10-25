@@ -26,18 +26,27 @@ import './style.css';
 import { DOWN, TAU } from './utils/math';
 
 window.onload = async () => {
-  document.body.appendChild(app.view);
+  const {
+    view,
+    screen,
+    stage,
+    renderer,
+    loader,
+    ticker,
+  } = app;
+
+  document.body.appendChild(view);
   /* handle screen resize */ {
     const handleResize = () => {
       const heightRatio = window.innerHeight / resolution.height;
       const widthRatio = window.innerWidth / resolution.width;
       const scale = Math.min(heightRatio, widthRatio);
-      app.renderer.resize(resolution.width * scale, resolution.height * scale);
-      app.stage.scale.x = scale;
-      app.stage.scale.y = scale;
+      renderer.resize(resolution.width * scale, resolution.height * scale);
+      stage.scale.x = scale;
+      stage.scale.y = scale;
 
       // place the stage pivot in the center of the screen
-      app.stage.position.set(app.screen.width / 2, app.screen.height / 2);
+      stage.position.set(screen.width / 2, screen.height / 2);
     };
     handleResize();
     window.addEventListener('resize', handleResize);
@@ -60,7 +69,6 @@ window.onload = async () => {
     await new Promise<void>((res, rej) => {
       const airplanesPath = './assets/airplanes.json';
       const cloudsPath = './assets/clouds.json';
-      const loader = app.loader;
       /* setup loader*/ {
         loader.add([airplanesPath, cloudsPath]);
         loader.onComplete.once(() => { res(); });
@@ -85,7 +93,7 @@ window.onload = async () => {
           airplaneSprite.scale.set(3);
           airplaneSprite.anchor.set(0.5, 0.5);
           player.sprite = airplaneSprite;
-          app.stage.addChild(player.sprite!);
+          stage.addChild(player.sprite!);
         }
         /* init cloud sprites */ {
           for (let i = 0; i < 20000; i++) {
@@ -97,14 +105,14 @@ window.onload = async () => {
               (Math.random() - 0.5) * resolution.height * 80,
               (Math.random() - 0.5) * resolution.width * 80
             );
-            app.stage.addChild(cloudSprite);
+            stage.addChild(cloudSprite);
           }
         }
       });
     });
   }
   /* update loop */ {
-    app.ticker.add((dt) => {
+    ticker.add((dt) => {
       dt /= 60;
       /* update player */ {
         /* update rotation */ {
@@ -193,7 +201,7 @@ window.onload = async () => {
         //  .add(scaledTarget)
 
         camera.position.copyFrom(player.position)
-        camera.position.toObservablePoint(app.stage.pivot);
+        camera.position.toObservablePoint(stage.pivot);
       }
     });
   }
