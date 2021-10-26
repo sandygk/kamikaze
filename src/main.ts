@@ -62,49 +62,50 @@ window.onload = async () => {
       setInputState(event.key, false);
     });
   }
-  /* load and place sprites */ {
-    await new Promise<void>((res) => {
-      const spritePaths = [
-        './assets/airplanes.json',
-        './assets/clouds.json'
-      ];
-      loader.add(spritePaths);
-
-      loader.load(() => {
-          /* set scale mode to nearest for each texture*/{
-          spritePaths.forEach((path: string) => {
-            const texture = loader.resources[`${path}_image`].texture;
-            if (texture) {
-              texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
-            }
-          });
-        }
-        /* init player sprite */ {
-          const airplaneSprite = new AnimatedSprite([Texture.from('airplane')]);
-          airplaneSprite.loop = true;
-          airplaneSprite.animationSpeed = 0.1;
-          airplaneSprite.play();
-          airplaneSprite.scale.set(3);
-          airplaneSprite.anchor.set(0.5, 0.5);
-          player.sprite = airplaneSprite;
-          stage.addChild(player.sprite!);
-        }
-        /* init cloud sprites */ {
-          for (let i = 0; i < 20000; i++) {
-            const cloudSprite = new Sprite(Texture.from('cloud'));
-            cloudSprite.scale.set(5);
-            cloudSprite.alpha = 0.7;
-            cloudSprites.push(cloudSprite);
-            cloudSprite.position.set(
-              (Math.random() - 0.5) * resolution.height * 80,
-              (Math.random() - 0.5) * resolution.width * 80
-            );
-            stage.addChild(cloudSprite);
+  /* init sprites */{
+    /* load textures and set scale mode to nearest*/ {
+      await new Promise<void>((res) => {
+        const spritePaths = [
+          './assets/airplanes.json',
+          './assets/clouds.json'
+        ];
+        loader.add(spritePaths);
+        loader.load(() => {
+        /* set scale mode to nearest for each texture*/{
+            spritePaths.forEach((path: string) => {
+              const texture = loader.resources[`${path}_image`].texture;
+              if (texture) {
+                texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+              }
+            });
           }
-        }
-        res();
+          res();
+        });
       });
-    });
+    }
+    /* init player sprite */ {
+      const airplaneSprite = new AnimatedSprite([Texture.from('airplane')]);
+      airplaneSprite.loop = true;
+      airplaneSprite.animationSpeed = 0.1;
+      airplaneSprite.play();
+      airplaneSprite.scale.set(3);
+      airplaneSprite.anchor.set(0.5, 0.5);
+      player.sprite = airplaneSprite;
+      stage.addChild(player.sprite!);
+    }
+    /* init cloud sprites */ {
+      for (let i = 0; i < 20000; i++) {
+        const cloudSprite = new Sprite(Texture.from('cloud'));
+        cloudSprite.scale.set(5);
+        cloudSprite.alpha = 0.7;
+        cloudSprites.push(cloudSprite);
+        cloudSprite.position.set(
+          (Math.random() - 0.5) * resolution.height * 80,
+          (Math.random() - 0.5) * resolution.width * 80
+        );
+        stage.addChild(cloudSprite);
+      }
+    }
   }
   /* update loop */ {
     ticker.add((dt) => {
