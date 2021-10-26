@@ -26,8 +26,7 @@ import './style.css';
 import { DOWN, TAU } from './utils/math';
 
 window.onload = async () => {
-  // destructure the most frequently used
-  // app fields for convenience
+  // destructure app for convenience
   const {
     view, screen, stage,
     renderer, loader, ticker,
