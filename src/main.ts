@@ -1,6 +1,6 @@
 // This file contains all the logic of the game.
 
-import { AnimatedSprite, Loader, SCALE_MODES, Sprite, Texture } from 'pixi.js';
+import { AnimatedSprite, SCALE_MODES, Sprite, Texture } from 'pixi.js';
 import {
   app,
   auxVector,
@@ -52,7 +52,7 @@ window.onload = async () => {
     const setInputState = (key: string, pressed: boolean) => {
       if (key === 'ArrowLeft') inputs.turnCounterclockwise = pressed;
       if (key === 'ArrowRight') inputs.turnClockwise = pressed;
-      if (key === 'ArrowUp') inputs.turbo = pressed;
+      if (key === 'ArrowUp') inputs.accelerate = pressed;
       if (key === 'Space') inputs.fire = pressed;
     };
     window.addEventListener('keydown', (event: any) => {
@@ -63,24 +63,21 @@ window.onload = async () => {
     });
   }
   /* load and place sprites */ {
-    await new Promise<void>((res, rej) => {
-      const airplanesPath = './assets/airplanes.json';
-      const cloudsPath = './assets/clouds.json';
-      /* setup loader*/ {
-        loader.add([airplanesPath, cloudsPath]);
-        loader.onComplete.once(() => { res(); });
-        loader.onError.once(() => { rej(); });
-      }
+    await new Promise<void>((res) => {
+      const spritePaths = [
+        './assets/airplanes.json',
+        './assets/clouds.json'
+      ];
+      loader.add(spritePaths);
+
       loader.load(() => {
-        /* set scale mode to nearest*/{
-          const setScaleModeToNearest = (loader: Loader, path: string) => {
+          /* set scale mode to nearest for each texture*/{
+          spritePaths.forEach((path: string) => {
             const texture = loader.resources[`${path}_image`].texture;
             if (texture) {
               texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
             }
-          };
-          setScaleModeToNearest(loader, airplanesPath);
-          setScaleModeToNearest(loader, cloudsPath);
+          });
         }
         /* init player sprite */ {
           const airplaneSprite = new AnimatedSprite([Texture.from('airplane')]);
@@ -105,6 +102,7 @@ window.onload = async () => {
             stage.addChild(cloudSprite);
           }
         }
+        res();
       });
     });
   }
@@ -121,13 +119,13 @@ window.onload = async () => {
           }
           /* accelerate/decelerate rotation */ {
             if (inputRotationSign) {
-              const rotationAcceleration = inputs.turbo ?
+              const rotationAcceleration = inputs.accelerate ?
                 PLAYER_TURBO_ANGULAR_ACCELERATION :
                 PLAYER_GLIDE_ANGULAR_ACCELERATION;
               player.angularSpeed += inputRotationSign * rotationAcceleration * dt;
             }
             else {
-              const rotationDeceleration = inputs.turbo ?
+              const rotationDeceleration = inputs.accelerate ?
                 PLAYER_TURBO_ANGULAR_DECELERATION :
                 PLAYER_GLIDE_ANGULAR_DECELERATION;
               const deltaRotationSpeed = Math.sign(player.angularSpeed) * rotationDeceleration * dt;
@@ -136,7 +134,7 @@ window.onload = async () => {
             }
           }
           /* clamp rotation speed */ {
-            const maxRotationSpeed = inputs.turbo ?
+            const maxRotationSpeed = inputs.accelerate ?
               PLAYER_TURBO_MAX_ANGULAR_SPEED :
               PLAYER_GLIDE_MAX_ANGULAR_SPEED;
             if (Math.abs(player.angularSpeed) > maxRotationSpeed)
@@ -159,7 +157,7 @@ window.onload = async () => {
             const deltaVelocity = auxVector
               .setToUp()
               .rotateTo(player.direction)
-              .multiplyScalar(inputs.turbo ?
+              .multiplyScalar(inputs.accelerate ?
                 PLAYER_TURBO_ACCELERATION :
                 PLAYER_GLIDE_ACCELERATION)
               .multiplyScalar(dt);

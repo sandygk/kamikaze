@@ -24,7 +24,7 @@ export const app = new Application({
 export const inputs = {
   turnCounterclockwise: false,
   turnClockwise: false,
-  turbo: false,
+  accelerate: false,
   fire: false,
 };
 
