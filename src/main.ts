@@ -26,6 +26,14 @@ import './style.css';
 import { DOWN, TAU } from './utils/math';
 
 window.onload = async () => {
+  /* set favicon*/ {
+    const head = document.querySelector('head');
+    const favicon = document.createElement('link');
+    favicon.setAttribute('rel', 'shortcut icon');
+    favicon.setAttribute('href', './assets/favicon.ico');
+    head!.appendChild(favicon);
+  }
+
   // destructure app for convenience
   const {
     view, screen, stage,
@@ -86,7 +94,6 @@ window.onload = async () => {
       airplaneSprite.loop = true;
       airplaneSprite.animationSpeed = 0.1;
       airplaneSprite.play();
-      airplaneSprite.scale.set(3);
       airplaneSprite.anchor.set(0.5, 0.5);
       player.sprite = airplaneSprite;
       stage.addChild(player.sprite!);
@@ -94,7 +101,7 @@ window.onload = async () => {
     /* init cloud sprites */ {
       for (let i = 0; i < 20000; i++) {
         const cloudSprite = new Sprite(Texture.from('cloud'));
-        cloudSprite.scale.set(5);
+        cloudSprite.scale.set(2.3);
         cloudSprite.alpha = 0.7;
         cloudSprites.push(cloudSprite);
         cloudSprite.position.set(
@@ -111,17 +118,17 @@ window.onload = async () => {
       /* update player */ {
         /* update rotation */ {
           /* compute input rotation sign */
-          let inputRotationSign; {
-            inputRotationSign = 0
-            if (inputs.turnClockwise) inputRotationSign += 1;
-            if (inputs.turnCounterclockwise) inputRotationSign -= 1;
+          let rotationSign; {
+            rotationSign = 0
+            if (inputs.turnClockwise) rotationSign += 1;
+            if (inputs.turnCounterclockwise) rotationSign -= 1;
           }
           /* accelerate/decelerate rotation */ {
-            if (inputRotationSign) {
+            if (rotationSign) {
               const rotationAcceleration = inputs.accelerate ?
                 PLAYER_TURBO_ANGULAR_ACCELERATION :
                 PLAYER_GLIDE_ANGULAR_ACCELERATION;
-              player.angularSpeed += inputRotationSign * rotationAcceleration * dt;
+              player.angularSpeed += rotationSign * rotationAcceleration * dt;
             }
             else {
               const rotationDeceleration = inputs.accelerate ?

@@ -8,8 +8,8 @@ import { PLAYER_GLIDE_MAX_SPEED } from './constants';
 
 /** Pixel resolution of the game*/
 export const resolution = {
-  width: 1920,
-  height: 1080,
+  width: 640,
+  height: 360,
 };
 
 /** Pixi.js app instance*/
