@@ -25,16 +25,16 @@ import {
 import './style.css';
 import { DOWN, TAU } from './utils/math';
 
-window.onload = async () => {
-  /* set title and favicon*/ {
-    document.title = 'Kamikaze';
-    const head = document.querySelector('head');
-    const favicon = document.createElement('link');
-    favicon.setAttribute('rel', 'shortcut icon');
-    favicon.setAttribute('href', './assets/favicon.ico');
-    head!.appendChild(favicon);
-  }
+/* set title and favicon*/ {
+  document.title = 'kamikaze';
+  const head = document.querySelector('head');
+  const favicon = document.createElement('link');
+  favicon.setAttribute('rel', 'shortcut icon');
+  favicon.setAttribute('href', './assets/favicon.ico');
+  head!.appendChild(favicon);
+}
 
+window.onload = async () => {
   // destructure app for convenience
   const {
     view, screen, stage,

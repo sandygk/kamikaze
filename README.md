@@ -1,5 +1,5 @@
-# Kamikaze
-Kamikaze is a super realistic air combat simulator.
+# Description
+*kamikaze* is a super realistic air combat simulator.
 
 ## Boilerplate
 
