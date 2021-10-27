@@ -26,7 +26,8 @@ import './style.css';
 import { DOWN, TAU } from './utils/math';
 
 window.onload = async () => {
-  /* set favicon*/ {
+  /* set title and favicon*/ {
+    document.title = 'Kamikaze';
     const head = document.querySelector('head');
     const favicon = document.createElement('link');
     favicon.setAttribute('rel', 'shortcut icon');
