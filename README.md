@@ -7,6 +7,6 @@ The repo started as a clone of [pixi-typescript-boilerplate](https://github.com/
 
 ## Commands
 
--   `yarn install` - to install dependencies
--   `yarn start` - start watching for files and open's server on localhost:8080yar
--   `yarn build` - starts build procedure
+-   `yarn install` - Installs dependencies
+-   `yarn start` - Starts watching for files and open's server on localhost:8080yar
+-   `yarn build` - Starts build procedure
