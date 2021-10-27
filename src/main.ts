@@ -63,24 +63,22 @@ window.onload = async () => {
     });
   }
   /* init sprites */{
-    /* load textures and set scale mode to nearest*/ {
+    const spritePaths = [
+      './assets/airplanes.json',
+      './assets/clouds.json'
+    ];
+    /* load textures*/ {
       await new Promise<void>((res) => {
-        const spritePaths = [
-          './assets/airplanes.json',
-          './assets/clouds.json'
-        ];
         loader.add(spritePaths);
-        loader.load(() => {
-        /* set scale mode to nearest for each texture*/{
-            spritePaths.forEach((path: string) => {
-              const texture = loader.resources[`${path}_image`].texture;
-              if (texture) {
-                texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
-              }
-            });
-          }
-          res();
-        });
+        loader.load(() => res());
+      });
+    }
+    /* set scale mode to nearest*/ {
+      spritePaths.forEach((path: string) => {
+        const texture = loader.resources[`${path}_image`].texture;
+        if (texture) {
+          texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+        }
       });
     }
     /* init player sprite */ {
