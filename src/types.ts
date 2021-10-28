@@ -7,8 +7,8 @@ import { Vector } from './utils/Vector';
 export type Player = {
   /** Speed at which the player is rotating. */
   angularSpeed: number;
-  /** The direction that the player is facing. */
-  direction: number;
+  /** Angle of rotation of the player. */
+  rotation: number;
   /** The velocity at which the player is moving. */
   readonly velocity: Vector;
   /** Current position of the player. */

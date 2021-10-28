@@ -32,7 +32,7 @@ export const inputs = {
 export const player: Player = {
   position: new Vector(),
   angularSpeed: 0,
-  direction: UP,
+  rotation: UP,
   velocity: new Vector().setToUp().multiplyScalar(PLAYER_GLIDE_MAX_SPEED),
 };
 

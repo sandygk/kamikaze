@@ -15,11 +15,11 @@ import {
   PLAYER_GLIDE_MAX_ANGULAR_SPEED,
   PLAYER_GLIDE_ANGULAR_ACCELERATION,
   PLAYER_GLIDE_ANGULAR_DECELERATION,
-  PLAYER_TURBO_ACCELERATION,
-  PLAYER_TURBO_MAX_ANGULAR_SPEED,
-  PLAYER_TURBO_MAX_SPEED,
-  PLAYER_TURBO_ANGULAR_ACCELERATION,
-  PLAYER_TURBO_ANGULAR_DECELERATION,
+  PLAYER_FLIGHT_ACCELERATION,
+  PLAYER_FLIGHT_MAX_ANGULAR_SPEED,
+  PLAYER_FLIGHT_MAX_SPEED,
+  PLAYER_FLIGHT_ANGULAR_ACCELERATION,
+  PLAYER_FLIGHT_ANGULAR_DECELERATION,
   PLAYER_GLIDE_ACCELERATION,
 } from './constants';
 import './style.css';
@@ -43,7 +43,9 @@ window.onload = async () => {
     renderer, loader, ticker,
   } = app;
 
+  // add pixi.js view to the body
   document.body.appendChild(view);
+
   /* handle screen resize */ {
     const handleResize = () => {
       const heightRatio = window.innerHeight / resolution.height;
@@ -128,29 +130,29 @@ window.onload = async () => {
           }
           /* accelerate/decelerate rotation */ {
             if (rotationSign) {
-              const rotationAcceleration = inputs.accelerate ?
-                PLAYER_TURBO_ANGULAR_ACCELERATION :
+              const angularAcceleration = inputs.accelerate ?
+                PLAYER_FLIGHT_ANGULAR_ACCELERATION :
                 PLAYER_GLIDE_ANGULAR_ACCELERATION;
-              player.angularSpeed += rotationSign * rotationAcceleration * dt;
+              player.angularSpeed += rotationSign * angularAcceleration * dt;
             }
             else {
-              const rotationDeceleration = inputs.accelerate ?
-                PLAYER_TURBO_ANGULAR_DECELERATION :
+              const angularDeceleration = inputs.accelerate ?
+                PLAYER_FLIGHT_ANGULAR_DECELERATION :
                 PLAYER_GLIDE_ANGULAR_DECELERATION;
-              const deltaRotationSpeed = Math.sign(player.angularSpeed) * rotationDeceleration * dt;
+              const deltaRotationSpeed = Math.sign(player.angularSpeed) * angularDeceleration * dt;
               if (Math.abs(player.angularSpeed) < deltaRotationSpeed) player.angularSpeed = 0;
               else player.angularSpeed -= deltaRotationSpeed;
             }
           }
-          /* clamp rotation speed */ {
-            const maxRotationSpeed = inputs.accelerate ?
-              PLAYER_TURBO_MAX_ANGULAR_SPEED :
+          /* clamp angular speed */ {
+            const maxAngularSpeed = inputs.accelerate ?
+              PLAYER_FLIGHT_MAX_ANGULAR_SPEED :
               PLAYER_GLIDE_MAX_ANGULAR_SPEED;
-            if (Math.abs(player.angularSpeed) > maxRotationSpeed)
-              player.angularSpeed = Math.sign(player.angularSpeed) * maxRotationSpeed;
+            if (Math.abs(player.angularSpeed) > maxAngularSpeed)
+              player.angularSpeed = Math.sign(player.angularSpeed) * maxAngularSpeed;
           }
-          /* update direction*/ {
-            player.direction += player.angularSpeed * dt * TAU;
+          /* update rotation*/ {
+            player.rotation += player.angularSpeed * dt * TAU;
           }
         }
         /* update position */ {
@@ -165,16 +167,16 @@ window.onload = async () => {
           /* accelerate velocity */ {
             const deltaVelocity = auxVector
               .setToUp()
-              .rotateTo(player.direction)
+              .rotateTo(player.rotation)
               .multiplyScalar(inputs.accelerate ?
-                PLAYER_TURBO_ACCELERATION :
+                PLAYER_FLIGHT_ACCELERATION :
                 PLAYER_GLIDE_ACCELERATION)
               .multiplyScalar(dt);
             player.velocity.add(deltaVelocity);
           }
 
           /* clamp velocity*/ {
-            player.velocity.clamp(PLAYER_TURBO_MAX_SPEED);
+            player.velocity.clamp(PLAYER_FLIGHT_MAX_SPEED);
           }
 
           /* update position */ {
@@ -185,7 +187,9 @@ window.onload = async () => {
           }
         }
         /* update sprite */ {
-          player.sprite!.rotation = player.direction + DOWN;
+          // NOTE: Adding DOWN because the airplane sprites are facing
+          // UP instead of RIGHT, so we need to account for that.
+          player.sprite!.rotation = player.rotation + DOWN;
           player.sprite!.position.set(player.position.x, player.position.y);
         }
       }
