@@ -166,7 +166,7 @@ window.onload = async () => {
 
           /* accelerate velocity */ {
             const deltaVelocity = auxVector
-              .setToUp()
+              .setToRight()
               .rotateTo(player.rotation)
               .multiplyScalar(inputs.accelerate ?
                 PLAYER_FLIGHT_ACCELERATION :
