@@ -1,10 +1,10 @@
 // This file contains all the global state of the game.
 
 import { Application, Sprite } from 'pixi.js';
+import { PLAYER_MAX_SPEED } from './constants';
 import { Player } from './types';
 import { UP } from './utils/math';
 import { Vector } from './utils/Vector';
-import { PLAYER_GLIDE_MAX_SPEED } from './constants';
 
 /** Pixel resolution of the game*/
 export const resolution = {
@@ -24,7 +24,6 @@ export const app = new Application({
 export const inputs = {
   turnCounterclockwise: false,
   turnClockwise: false,
-  accelerate: false,
   fire: false,
 };
 
@@ -33,7 +32,7 @@ export const player: Player = {
   position: new Vector(),
   angularSpeed: 0,
   rotation: UP,
-  velocity: new Vector().setToUp().multiplyScalar(PLAYER_GLIDE_MAX_SPEED),
+  velocity: new Vector().setToUp().multiplyScalar(PLAYER_MAX_SPEED),
 };
 
 /** Stores the information of the camera */

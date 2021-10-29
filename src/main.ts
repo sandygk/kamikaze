@@ -12,15 +12,11 @@ import {
 } from './state';
 import {
   PLAYER_DECELERATION,
-  PLAYER_GLIDE_MAX_ANGULAR_SPEED,
-  PLAYER_GLIDE_ANGULAR_ACCELERATION,
-  PLAYER_GLIDE_ANGULAR_DECELERATION,
-  PLAYER_FLIGHT_ACCELERATION,
-  PLAYER_FLIGHT_MAX_ANGULAR_SPEED,
-  PLAYER_FLIGHT_MAX_SPEED,
-  PLAYER_FLIGHT_ANGULAR_ACCELERATION,
-  PLAYER_FLIGHT_ANGULAR_DECELERATION,
-  PLAYER_GLIDE_ACCELERATION,
+  PLAYER_ACCELERATION,
+  PLAYER_MAX_ANGULAR_SPEED,
+  PLAYER_MAX_SPEED,
+  PLAYER_ANGULAR_ACCELERATION,
+  PLAYER_ANGULAR_DECELERATION,
 } from './constants';
 import './style.css';
 import { DOWN, TAU } from './utils/math';
@@ -65,7 +61,6 @@ window.onload = async () => {
     const setInputState = (key: string, pressed: boolean) => {
       if (key === 'ArrowLeft') inputs.turnCounterclockwise = pressed;
       if (key === 'ArrowRight') inputs.turnClockwise = pressed;
-      if (key === 'ArrowUp') inputs.accelerate = pressed;
       if (key === 'Space') inputs.fire = pressed;
     };
     window.addEventListener('keydown', (event: any) => {
@@ -130,33 +125,24 @@ window.onload = async () => {
           }
           /* accelerate/decelerate rotation */ {
             if (rotationSign) {
-              const angularAcceleration = inputs.accelerate ?
-                PLAYER_FLIGHT_ANGULAR_ACCELERATION :
-                PLAYER_GLIDE_ANGULAR_ACCELERATION;
-              player.angularSpeed += rotationSign * angularAcceleration * dt;
+              player.angularSpeed += rotationSign * PLAYER_ANGULAR_ACCELERATION * dt;
             }
             else {
-              const angularDeceleration = inputs.accelerate ?
-                PLAYER_FLIGHT_ANGULAR_DECELERATION :
-                PLAYER_GLIDE_ANGULAR_DECELERATION;
-              const deltaRotationSpeed = Math.sign(player.angularSpeed) * angularDeceleration * dt;
+              const deltaRotationSpeed = Math.sign(player.angularSpeed) * PLAYER_ANGULAR_DECELERATION * dt;
               if (Math.abs(player.angularSpeed) < deltaRotationSpeed) player.angularSpeed = 0;
               else player.angularSpeed -= deltaRotationSpeed;
             }
           }
           /* clamp angular speed */ {
-            const maxAngularSpeed = inputs.accelerate ?
-              PLAYER_FLIGHT_MAX_ANGULAR_SPEED :
-              PLAYER_GLIDE_MAX_ANGULAR_SPEED;
-            if (Math.abs(player.angularSpeed) > maxAngularSpeed)
-              player.angularSpeed = Math.sign(player.angularSpeed) * maxAngularSpeed;
+            if (Math.abs(player.angularSpeed) > PLAYER_MAX_ANGULAR_SPEED)
+              player.angularSpeed = Math.sign(player.angularSpeed) * PLAYER_MAX_ANGULAR_SPEED;
           }
           /* update rotation*/ {
             player.rotation += player.angularSpeed * dt * TAU;
           }
         }
         /* update position */ {
-          /* decelerate velocity (apply drag) */ {
+          /* decelerate (apply drag force) */ {
             const deltaVelocity = PLAYER_DECELERATION * dt;
             if (Math.abs(player.velocity.x) <= deltaVelocity) player.velocity.x = 0;
             else player.velocity.x += -Math.sign(player.velocity.x) * deltaVelocity;
@@ -164,24 +150,19 @@ window.onload = async () => {
             else player.velocity.y += -Math.sign(player.velocity.y) * deltaVelocity;
           }
 
-          /* accelerate velocity */ {
+          /* accelerate (apply engine force)*/ {
             const deltaVelocity = auxVector
-              .setToRight()
-              .rotateTo(player.rotation)
-              .multiplyScalar(inputs.accelerate ?
-                PLAYER_FLIGHT_ACCELERATION :
-                PLAYER_GLIDE_ACCELERATION)
-              .multiplyScalar(dt);
-            player.velocity.add(deltaVelocity);
-          }
+              .fromAngle(player.rotation)
+              .multiplyScalar(PLAYER_ACCELERATION * dt)
 
-          /* clamp velocity*/ {
-            player.velocity.clamp(PLAYER_FLIGHT_MAX_SPEED);
+            player.velocity
+              .add(deltaVelocity)
+              .clamp(PLAYER_MAX_SPEED)
           }
 
           /* update position */ {
             const displacement = auxVector
-              .copyFrom(player.velocity)
+              .copy(player.velocity)
               .multiplyScalar(dt)
             player.position.add(displacement);
           }
@@ -208,7 +189,7 @@ window.onload = async () => {
         //  .multiplyScalar(1 - t)
         //  .add(scaledTarget)
 
-        camera.position.copyFrom(player.position)
+        camera.position.copy(player.position)
         camera.position.toObservablePoint(stage.pivot);
       }
     });

@@ -1,10 +1,23 @@
 // This file contains an implementation of a vector class
 
 import { ObservablePoint } from "@pixi/math";
+import { almostEqual, EPSILON } from "./math";
 
-/** 2d Vector class with support for vector operations.
- * The class is designed with memory efficiency in mind,
- * to avoid polluting the heap with vector instances.
+
+
+/**
+2d Vector class with support for vector operations.
+
+The class is designed with memory efficiency in mind,
+to avoid polluting the heap with vector instances.
+For this reason the only method that creates a new
+vector instance is the constructor and all the
+changes occur in place, i.e. the `this` vector is
+modified instead of creating a new instance for each
+operation.
+
+All methods return the modified vector to allow for
+chaining.
 */
 export class Vector {
   /** `x` component of the vector.*/
@@ -19,15 +32,8 @@ export class Vector {
   }
 
   /**
-  Creates a new vector with the same `x` and `y` components as `this.`
-  @return The cloned vector.
-  */
-  clone() {
-    return new Vector(this.x, this.y);
-  }
-
-  /**
-  Utility function to conveniently set the values of the fields `x` and `y` of `this` vector.
+  Set the values of the
+  fields `x` and `y` of `this` vector.
   @returns the modified `this` vector.
   */
   set(x: number, y: number) {
@@ -37,20 +43,66 @@ export class Vector {
   }
 
   /**
-  Utility function to conveniently copy the values of the fields `x` and `y`
+  Copy the values of the fields `x` and `y` from another vector.
   of `this` vector from another vector.
   @params The vector to copy from.
   @returns The modified `this` vector.
   */
-  copyFrom(vector: Vector) {
+  copy(vector: Vector) {
     this.x = vector.x;
     this.y = vector.y;
     return this;
   }
 
   /**
-  Sets `x` and `y` of `this` vector to make it a unit vector pointing to the left.
+  Checks whether two vectors are almost equal i.e. within a given epsilon.
+  @param vector The other vector tho compare to.
+  @param epsilon The value of epsilon to use for the comparison.
+  @returns Whether the vectors are almost equal or not.
+  */
+  almostEqual(vector: Vector, epsilon = EPSILON) {
+    return (
+      almostEqual(this.x, vector.x, epsilon) &&
+      almostEqual(this.y, vector.y, epsilon)
+    );
+  }
+
+  /**
+  Copies the `x` and `y` fields from an ObservablePoint.
+  @argument vector The vector to copy from.
+  @argument point The point to copy to.
+  @returns The modified ObservablePoint.
+  */
+  toObservablePoint(point: ObservablePoint) {
+    return point.set(this.x, this.y);
+  }
+
+  /**
+  Copies the `x` and `y` fields to an ObservablePoint.
+  @argument vector The vector to copy from.
+  @argument point The point to copy to.
+  @returns The modified point.
+  */
+  fromObservablePoint(point: ObservablePoint) {
+    this.x = point.x;
+    this.y = point.y;
+    return this;
+  }
+
+  /**
+  Modifies `this` vector to be the unit size vector pointing to the given angle.
+  @argument angle the angle in radians to point `this` vector at.
   @returns the modified `this` vector.
+  */
+  fromAngle(angle: number) {
+    this.x = Math.cos(angle);
+    this.y = Math.sin(angle);
+    return this;
+  }
+
+  /**
+  Sets `x` and `y` of `this` vector to make it a unit vector pointing to the left.
+  @returns the modified `this` vector set to (-1, 0).
   */
   setToLeft() {
     return this.set(-1, 0);
@@ -58,7 +110,7 @@ export class Vector {
 
   /**
   Sets `x` and `y` of `this` vector  to make it a unit vector pointing to the right.
-  @returns the modified `this` vector.
+  @returns the modified `this` vector set to (1, 0).
   */
   setToRight() {
     return this.set(1, 0);
@@ -66,7 +118,8 @@ export class Vector {
 
   /**
   Sets `x` and `y` of `this` vector  to make it a unit vector pointing upwards.
-  @returns the modified `this` vector.
+
+  @returns the modified `this` vector set to (0, -1). Notice the Y axis points down in 2D.
   */
   setToUp() {
     return this.set(0, -1);
@@ -74,7 +127,7 @@ export class Vector {
 
   /**
   Sets `x` and `y` of `this` vector  to make it a unit vector pointing downwards.
-  @returns the modified `this` vector.
+  @returns the modified `this` vector set to (0, -1). Notice the Y axis points down in 2D.
   */
   setToDown() {
     return this.set(0, 1);
@@ -125,17 +178,6 @@ export class Vector {
   }
 
   /**
-  Multiplies another vector to `this`. `this` vector is modified and returned.
-  @param vector The vector to multiply.
-  @returns `this` vector modified by the operation.
-  */
-  multiply(vector: Vector) {
-    this.x *= vector.x;
-    this.y *= vector.y;
-    return this;
-  }
-
-  /**
   Multiplies a scalar to `this`. `this` vector is modified and returned.
   @param scalar The scalar to multiply.
   @returns `this` vector modified by the operation.
@@ -143,17 +185,6 @@ export class Vector {
   multiplyScalar(scalar: number) {
     this.x *= scalar;
     this.y *= scalar;
-    return this;
-  }
-
-  /**
-  Multiplies another vector to `this`. `this` vector is modified and returned.
-  @param vector The vector to divide.
-  @returns `this` vector modified by the operation.
-  */
-  divide(vector: Vector) {
-    this.x /= vector.x;
-    this.y /= vector.y;
     return this;
   }
 
@@ -179,9 +210,7 @@ export class Vector {
   @returns The negated `this` vector.
   */
   negate() {
-    this.x = -this.x;
-    this.y = -this.y;
-    return this;
+    this.multiplyScalar(-1);
   }
 
   /**
@@ -198,18 +227,18 @@ export class Vector {
   }
 
   /**
-  Multiplies `this` vector by another using the *dot* product. The result is stored in `this` vector.
+  Multiplies `this` vector by another using the *dot* product.
   @param vector the vector to multiply.
-  @returns The modified `this` vector.
+  @returns The value of the *dot* product.
   */
   dot(vector: Vector) {
     return this.x * vector.x + this.y * vector.y;
   }
 
   /**
-  Multiplies `this` vector by another using the *cross* product. The result is stored in `this` vector.
+  Multiplies `this` vector by another using the *cross* product.
   @param vector the vector to multiply.
-  @returns The modified `this` vector.
+  @returns The value of the *cross* product.
   */
   cross(vector: Vector) {
     return this.x * vector.y - this.y * vector.x;
@@ -217,10 +246,30 @@ export class Vector {
 
   /**
   Returns the angle of the vector in radians.
+  If the vector has no length returns 0.
   @returns The angle of the vector.
   */
-  getAngle() {
+  angle() {
     return Math.atan2(this.y, this.x);
+  }
+
+  /**
+  Returns the angle to the given vector, in radians.
+  @param vector The other vector.
+  @returns The angle to the vector.
+  */
+  angleTo(vector: Vector) {
+    return Math.atan2(this.cross(vector), this.dot(vector));
+  }
+
+  /**
+  Returns the angle between the line connecting the two
+  points and the X axis, in radians.
+  @param point The other point.
+  @returns The computed angle.
+  */
+  angleToPoint(point: Vector) {
+    return Math.atan2(this.y - point.y, this.x - point.x);
   }
 
   /**
@@ -229,12 +278,12 @@ export class Vector {
   @return The rotated `this` vector.
   */
   rotate(angle: number) {
-    const newX = this.x * Math.cos(angle) - this.y * Math.sin(angle);
-    const newY = this.x * Math.sin(angle) + this.y * Math.cos(angle);
-
-    this.x = newX;
-    this.y = newY;
-    return this;
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+    return this.set(
+      this.x * cos - this.y * sin,
+      this.x * sin + this.y * cos
+    );
   }
 
   /**
@@ -243,16 +292,17 @@ export class Vector {
   @return The rotated `this` vector.
   */
   rotateTo(rotation: number) {
-    return this.rotate(rotation - this.getAngle());
+    return this.rotate(rotation - this.angle());
   }
 
   /**
   Sets the length of `this` vector to a given value.
+  If the vector has no length assumes and angle of 0 degrees.
   @param length Then new length of the vector
   @returns The modified `this` vector with the new length.
   */
   setLength(length: number) {
-    const angle = this.getAngle();
+    const angle = this.angle();
     this.x = Math.cos(angle) * length;
     this.y = Math.sin(angle) * length;
   }
@@ -308,14 +358,108 @@ export class Vector {
   }
 
   /**
-   * Copies a Vector to an ObservablePoint
-   * @argument vector The vector to copy from
-   * @argument point The point to copy to
-   * @returns The modified point
+  Checks if the vector is normalized, i.e. it's lengths equals 1.
+  @param epsilon The value of epsilon to use for the comparison.
+  @returns Wether or not the `this` vector is normalized.
   */
-  toObservablePoint(point: ObservablePoint) {
-    return point.set(this.x, this.y);
+  isNormalize(epsilon = EPSILON) {
+    return almostEqual(this.length(), 1, epsilon);
+  }
+
+  /**
+  Modifies `this` vector to be the normalized vector pointing from
+  `this` vector to the other.
+  @param vector The other vector.
+  @return The modified `this` vector.
+  */
+  directionTo(vector: Vector) {
+    return this.copy(
+      auxVector.copy(vector).subtract(this).normalize()
+    )
+  }
+
+  /**
+  Modifies `this` vector to be the vector reflected from
+  a plane defined by the given normal. The normal doesn't have
+  to be normalized.
+  @param normal The normal that defines the reflection plane.
+  It doesn't have to be normalized.
+  @returns The modified `this` vector.
+  */
+  reflect(normal: Vector) {
+    const normalizedNormal = auxVector.copy(normal).normalize();
+    return this.copy(
+      normalizedNormal.
+        multiplyScalar(2 * this.dot(normalizedNormal))
+        .subtract(this));
+  }
+
+  /**
+  Modifies `this` vector to be the vector "bounced off" from
+  a plane defined by the given normal.
+  @param normal The normal that defines the reflection plane.
+  It doesn't have to be normalized.
+  @returns The modified `this` vector.
+  */
+  bounce(normal: Vector) {
+    this.reflect(normal).negate();
+  }
+
+  /**
+  Returns the result of the linear interpolation between
+  `this` vector and another by amount `weight`. `weight` is on the range of 0.0 to 1.0,
+  representing the amount of interpolation.
+  @param vector The other vector.
+  @param weight The interpolation weight.
+  @result The modified `this` vector.
+  */
+  lerp(vector: Vector, weight: number) {
+    return this.set(
+      this.x + (weight * (vector.x - this.x)),
+      this.y + (weight * (vector.y - this.y))
+    );
+  }
+
+  /**
+  Moves `this` vector toward another by the fixed `delta` amount.
+  @param vector The other vector.
+  @param delta The amount to move `this` vector by.
+  @result The modified `this` vector.
+  */
+  moveToward(vector: Vector, delta: number) {
+    const distanceVector = auxVector.copy(vector).subtract(this);
+
+    if (distanceVector.length() < delta)
+      return this.copy(vector);
+
+    return this.add(
+      distanceVector.normalize().multiplyScalar(delta)
+    );
+  }
+
+  /**
+  Project this vector onto another.
+  @param vector The other vector.
+  @return The modified `this` vector.
+  */
+  project(vector: Vector) {
+    return this.copy(
+      auxVector.copy(vector).multiplyScalar(this.dot(vector) / vector.lengthSq())
+    );
+  }
+
+  /**
+  Modifies `this` vector to be perpendicular vector (rotated 90 degrees counter-clockwise)
+  compared to the original, with the same length.
+  @return The modified `this` vector
+  */
+  orthogonal() {
+    return this.set(this.y, -this.x);
   }
 }
+
+/**Auxiliary vector to be used for internal computations of the Vector class*/
+const auxVector = new Vector();
+
 
 
