@@ -4,7 +4,7 @@ import { Application, Sprite } from 'pixi.js';
 import { PLAYER_MAX_SPEED } from './constants';
 import { Player } from './types';
 import { UP } from './utils/math';
-import { Vector } from './utils/Vector';
+import { Vector2D } from './utils/Vector';
 
 /** Pixel resolution of the game*/
 export const resolution = {
@@ -29,19 +29,16 @@ export const inputs = {
 
 /** Player instance */
 export const player: Player = {
-  position: new Vector(),
+  position: new Vector2D(),
   angularSpeed: 0,
   rotation: UP,
-  velocity: new Vector().setToUp().multiplyScalar(PLAYER_MAX_SPEED),
+  velocity: new Vector2D().setToUp().multiplyScalar(PLAYER_MAX_SPEED),
 };
 
 /** Stores the information of the camera */
 export const camera = {
-  position: new Vector(),
+  position: new Vector2D(),
 };
-
-/** Auxiliary vector for update computations to avoid generating memory garbage */
-export const auxVector = new Vector();
 
 /** Array to store all instances of the cloud sprites */
 export const cloudSprites: Sprite[] = [];

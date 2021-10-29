@@ -3,7 +3,6 @@
 import { AnimatedSprite, SCALE_MODES, Sprite, Texture } from 'pixi.js';
 import {
   app,
-  auxVector,
   camera,
   cloudSprites,
   inputs,
@@ -20,6 +19,7 @@ import {
 } from './constants';
 import './style.css';
 import { DOWN, TAU } from './utils/math';
+import { vectorPool } from './utils/Vector';
 
 window.onload = async () => {
   /* set title and favicon*/ {
@@ -114,6 +114,7 @@ window.onload = async () => {
   }
   /* update loop */ {
     ticker.add((dt) => {
+      vectorPool.clear();
       dt /= 60;
       /* update player */ {
         /* update rotation */ {
@@ -151,7 +152,8 @@ window.onload = async () => {
           }
 
           /* accelerate (apply engine force)*/ {
-            const deltaVelocity = auxVector
+            const deltaVelocity = vectorPool
+              .new()
               .fromAngle(player.rotation)
               .multiplyScalar(PLAYER_ACCELERATION * dt)
 
@@ -161,7 +163,7 @@ window.onload = async () => {
           }
 
           /* update position */ {
-            const displacement = auxVector
+            const displacement = vectorPool
               .copy(player.velocity)
               .multiplyScalar(dt)
             player.position.add(displacement);
@@ -175,7 +177,7 @@ window.onload = async () => {
         }
       }
       /* update camera */ {
-        //const target = auxVector
+        //const target = vectorPool.new()
         //  .setToRight()
         //  .rotateTo(player.direction)
         //  .multiplyScalar(400)

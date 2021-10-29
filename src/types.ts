@@ -1,7 +1,7 @@
 // This file contains all the types of the game.
 
 import { AnimatedSprite } from 'pixi.js';
-import { Vector } from './utils/Vector';
+import { Vector2D } from './utils/Vector';
 
 /** Defines all the players' data*/
 export type Player = {
@@ -10,9 +10,9 @@ export type Player = {
   /** Angle of rotation of the player. */
   rotation: number;
   /** The velocity at which the player is moving. */
-  readonly velocity: Vector;
+  readonly velocity: Vector2D;
   /** Current position of the player. */
-  readonly position: Vector;
+  readonly position: Vector2D;
   /** The sprite of the player. */
   sprite?: AnimatedSprite;
 };

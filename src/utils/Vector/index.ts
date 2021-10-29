@@ -1,9 +1,8 @@
-// This file contains an implementation of a vector class
+// This file contains an implementation of a Vector2D class
 
 import { ObservablePoint } from "@pixi/math";
-import { almostEqual, EPSILON } from "./math";
-
-
+import { almostEqual, EPSILON } from "../math";
+import { VectorPool } from "./VectorPool"
 
 /**
 2d Vector class with support for vector operations.
@@ -18,8 +17,13 @@ operation.
 
 All methods return the modified vector to allow for
 chaining.
+
+For the methods that need the creation of auxiliary
+vectors, the class uses an instance of the VectorPool
+class that should be cleared on every iteration of
+the main loop.
 */
-export class Vector {
+export class Vector2D {
   /** `x` component of the vector.*/
   x: number;
   /** `y` component of the vector.*/
@@ -48,7 +52,7 @@ export class Vector {
   @params The vector to copy from.
   @returns The modified `this` vector.
   */
-  copy(vector: Vector) {
+  copy(vector: Vector2D) {
     this.x = vector.x;
     this.y = vector.y;
     return this;
@@ -60,7 +64,7 @@ export class Vector {
   @param epsilon The value of epsilon to use for the comparison.
   @returns Whether the vectors are almost equal or not.
   */
-  almostEqual(vector: Vector, epsilon = EPSILON) {
+  almostEqual(vector: Vector2D, epsilon = EPSILON) {
     return (
       almostEqual(this.x, vector.x, epsilon) &&
       almostEqual(this.y, vector.y, epsilon)
@@ -138,7 +142,7 @@ export class Vector {
   @param vector The vector to add.
   @returns `this` vector modified by the operation.
   */
-  add(vector: Vector) {
+  add(vector: Vector2D) {
     this.x += vector.x;
     this.y += vector.y;
     return this;
@@ -160,7 +164,7 @@ export class Vector {
   @param vector The vector to subtract.
   @returns `this` vector modified by the operation.
   */
-  subtract(vector: Vector) {
+  subtract(vector: Vector2D) {
     this.x -= vector.x;
     this.y -= vector.y;
     return this;
@@ -231,7 +235,7 @@ export class Vector {
   @param vector the vector to multiply.
   @returns The value of the *dot* product.
   */
-  dot(vector: Vector) {
+  dot(vector: Vector2D) {
     return this.x * vector.x + this.y * vector.y;
   }
 
@@ -240,7 +244,7 @@ export class Vector {
   @param vector the vector to multiply.
   @returns The value of the *cross* product.
   */
-  cross(vector: Vector) {
+  cross(vector: Vector2D) {
     return this.x * vector.y - this.y * vector.x;
   }
 
@@ -258,7 +262,7 @@ export class Vector {
   @param vector The other vector.
   @returns The angle to the vector.
   */
-  angleTo(vector: Vector) {
+  angleTo(vector: Vector2D) {
     return Math.atan2(this.cross(vector), this.dot(vector));
   }
 
@@ -268,7 +272,7 @@ export class Vector {
   @param point The other point.
   @returns The computed angle.
   */
-  angleToPoint(point: Vector) {
+  angleToPoint(point: Vector2D) {
     return Math.atan2(this.y - point.y, this.x - point.x);
   }
 
@@ -328,7 +332,7 @@ export class Vector {
   @param vector the other vector.
   @returns The distance between the two vectors.
   */
-  distance(vector: Vector) {
+  distance(vector: Vector2D) {
     return Math.sqrt(this.distanceSq(vector));
   }
 
@@ -337,7 +341,7 @@ export class Vector {
   @param vector the other vector.
   @returns The distance between the two vectors.
   */
-  distanceSq(vector: Vector) {
+  distanceSq(vector: Vector2D) {
     const dx = this.x - vector.x;
     const dy = this.y - vector.y;
     return dx * dx + dy * dy;
@@ -372,9 +376,9 @@ export class Vector {
   @param vector The other vector.
   @return The modified `this` vector.
   */
-  directionTo(vector: Vector) {
+  directionTo(vector: Vector2D) {
     return this.copy(
-      auxVector.copy(vector).subtract(this).normalize()
+      vectorPool.copy(vector).subtract(this).normalize()
     )
   }
 
@@ -386,8 +390,8 @@ export class Vector {
   It doesn't have to be normalized.
   @returns The modified `this` vector.
   */
-  reflect(normal: Vector) {
-    const normalizedNormal = auxVector.copy(normal).normalize();
+  reflect(normal: Vector2D) {
+    const normalizedNormal = vectorPool.copy(normal).normalize();
     return this.copy(
       normalizedNormal.
         multiplyScalar(2 * this.dot(normalizedNormal))
@@ -401,7 +405,7 @@ export class Vector {
   It doesn't have to be normalized.
   @returns The modified `this` vector.
   */
-  bounce(normal: Vector) {
+  bounce(normal: Vector2D) {
     this.reflect(normal).negate();
   }
 
@@ -413,7 +417,7 @@ export class Vector {
   @param weight The interpolation weight.
   @result The modified `this` vector.
   */
-  lerp(vector: Vector, weight: number) {
+  lerp(vector: Vector2D, weight: number) {
     return this.set(
       this.x + (weight * (vector.x - this.x)),
       this.y + (weight * (vector.y - this.y))
@@ -426,8 +430,8 @@ export class Vector {
   @param delta The amount to move `this` vector by.
   @result The modified `this` vector.
   */
-  moveToward(vector: Vector, delta: number) {
-    const distanceVector = auxVector.copy(vector).subtract(this);
+  moveToward(vector: Vector2D, delta: number) {
+    const distanceVector = vectorPool.copy(vector).subtract(this);
 
     if (distanceVector.length() < delta)
       return this.copy(vector);
@@ -442,9 +446,9 @@ export class Vector {
   @param vector The other vector.
   @return The modified `this` vector.
   */
-  project(vector: Vector) {
+  project(vector: Vector2D) {
     return this.copy(
-      auxVector.copy(vector).multiplyScalar(this.dot(vector) / vector.lengthSq())
+      vectorPool.copy(vector).multiplyScalar(this.dot(vector) / vector.lengthSq())
     );
   }
 
@@ -458,8 +462,8 @@ export class Vector {
   }
 }
 
-/**Auxiliary vector to be used for internal computations of the Vector class*/
-const auxVector = new Vector();
+/** Global vector pool to manage the memory allocation of vectors*/
+export const vectorPool = new VectorPool(10);
 
 
 
