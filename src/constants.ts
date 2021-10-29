@@ -5,7 +5,7 @@ export const PLAYER_ANGULAR_ACCELERATION = 2;
 /** Player's angular deceleration when flighting */
 export const PLAYER_ANGULAR_DECELERATION = 5;
 /** Player's maximum angular speed when flighting */
-export const PLAYER_MAX_ANGULAR_SPEED = .6;
+export const PLAYER_MAX_ANGULAR_SPEED = .7;
 
 /** Player's acceleration when flighting */
 export const PLAYER_ACCELERATION = 900;
