@@ -1,5 +1,6 @@
 // This file contains an implementation of a TickPool class
 
+import { ObservablePoint } from "@pixi/math";
 import { Vector2D } from "./";
 
 /**
@@ -45,12 +46,12 @@ export class VectorPool {
   }
 
   /**
-  Gets a newly active vector to be used.
-  The method only allocate new vectors when there are no inactive
-  ones in the pool.
-  @returns The newly active vector.
+  Provides a vector, by either recycling an inactive
+  one, or allocating one if there are no inactive
+  vectors in the pool.
+  @returns The provided vector.
   */
-  new(x = 0, y = 0) {
+  get(x = 0, y = 0) {
     this._count++
     if (this.size < this.count) {
       this._pool.push(new Vector2D());
@@ -59,15 +60,30 @@ export class VectorPool {
   }
 
   /**
-  Gets a newly active vector to be used initialized as a copy of
-  the given vector.
-
-  The method only allocates new vectors when there are no inactive
-  ones in the pool.
-  @returns The newly active vector.
+  Provides a vector and copies the values from another.
+  @param vector The vector to copy from.
+  @returns The provided vector.
   */
-  copy(vector: Vector2D) {
-    return this.new().copy(vector);
+  getCopy(vector: Vector2D) {
+    return this.get().copy(vector);
+  }
+
+  /**
+  Provides a vector and initializes it from a given angle.
+  @param angle The angle to initialize the vector from.
+  @returns The provided vector.
+  */
+  getFromAngle(angle: number) {
+    return this.get().fromAngle(angle);
+  }
+
+  /**
+  Provides a vector and initializes it from an ObservablePoint.
+  @param point The ObservablePoint to initialize the vector from.
+  @returns The provided vector.
+  */
+  getFromObservablePoint(point: ObservablePoint) {
+    return this.get().fromObservablePoint(point);
   }
 
   /**

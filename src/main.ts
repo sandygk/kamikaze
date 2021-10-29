@@ -16,6 +16,7 @@ import {
   PLAYER_MAX_SPEED,
   PLAYER_ANGULAR_ACCELERATION,
   PLAYER_ANGULAR_DECELERATION,
+  CAMERA_TIME_AHEAD,
 } from './constants';
 import './style.css';
 import { DOWN, TAU } from './utils/math';
@@ -153,8 +154,7 @@ window.onload = async () => {
 
           /* accelerate (apply engine force)*/ {
             const deltaVelocity = vectorPool
-              .new()
-              .fromAngle(player.rotation)
+              .getFromAngle(player.rotation)
               .multiplyScalar(PLAYER_ACCELERATION * dt)
 
             player.velocity
@@ -164,7 +164,7 @@ window.onload = async () => {
 
           /* update position */ {
             const displacement = vectorPool
-              .copy(player.velocity)
+              .getCopy(player.velocity)
               .multiplyScalar(dt)
             player.position.add(displacement);
           }
@@ -177,21 +177,15 @@ window.onload = async () => {
         }
       }
       /* update camera */ {
-        //const target = vectorPool.new()
-        //  .setToRight()
-        //  .rotateTo(player.direction)
-        //  .multiplyScalar(400)
-        //  .add(player.position);
-
-        ////Linearly interpolate camera.position with target:
-        ////formula: A*t + B*(1 - t)
-        //const t = 0.07;
-        //const scaledTarget = target.multiplyScalar(t);
-        //camera.position
-        //  .multiplyScalar(1 - t)
-        //  .add(scaledTarget)
-
-        camera.position.copy(player.position)
+        // set the camera position to where the player will be
+        // after CAMERA_TIME_AHEAD seconds, based on the player
+        // current velocity
+        const displacement = vectorPool
+          .getCopy(player.velocity)
+          .multiplyScalar(CAMERA_TIME_AHEAD);
+        camera.position
+          .copy(player.position)
+          .add(displacement)
         camera.position.toObservablePoint(stage.pivot);
       }
     });

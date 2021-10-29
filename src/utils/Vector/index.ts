@@ -72,7 +72,7 @@ export class Vector2D {
   }
 
   /**
-  Copies the `x` and `y` fields from an ObservablePoint.
+  Copies the `x` and `y` fields to an ObservablePoint.
   @argument vector The vector to copy from.
   @argument point The point to copy to.
   @returns The modified ObservablePoint.
@@ -82,7 +82,7 @@ export class Vector2D {
   }
 
   /**
-  Copies the `x` and `y` fields to an ObservablePoint.
+  Copies the `x` and `y` fields from an ObservablePoint.
   @argument vector The vector to copy from.
   @argument point The point to copy to.
   @returns The modified point.
@@ -378,7 +378,7 @@ export class Vector2D {
   */
   directionTo(vector: Vector2D) {
     return this.copy(
-      vectorPool.copy(vector).subtract(this).normalize()
+      vectorPool.getCopy(vector).subtract(this).normalize()
     )
   }
 
@@ -391,7 +391,7 @@ export class Vector2D {
   @returns The modified `this` vector.
   */
   reflect(normal: Vector2D) {
-    const normalizedNormal = vectorPool.copy(normal).normalize();
+    const normalizedNormal = vectorPool.getCopy(normal).normalize();
     return this.copy(
       normalizedNormal.
         multiplyScalar(2 * this.dot(normalizedNormal))
@@ -431,7 +431,7 @@ export class Vector2D {
   @result The modified `this` vector.
   */
   moveToward(vector: Vector2D, delta: number) {
-    const distanceVector = vectorPool.copy(vector).subtract(this);
+    const distanceVector = vectorPool.getCopy(vector).subtract(this);
 
     if (distanceVector.length() < delta)
       return this.copy(vector);
@@ -448,7 +448,7 @@ export class Vector2D {
   */
   project(vector: Vector2D) {
     return this.copy(
-      vectorPool.copy(vector).multiplyScalar(this.dot(vector) / vector.lengthSq())
+      vectorPool.getCopy(vector).multiplyScalar(this.dot(vector) / vector.lengthSq())
     );
   }
 

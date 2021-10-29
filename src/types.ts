@@ -11,7 +11,7 @@ export type Player = {
   rotation: number;
   /** The velocity at which the player is moving. */
   readonly velocity: Vector2D;
-  /** Current position of the player. */
+  /** The position of the player. */
   readonly position: Vector2D;
   /** The sprite of the player. */
   sprite?: AnimatedSprite;
