@@ -17,6 +17,7 @@ import {
   PLAYER_ANGULAR_ACCELERATION,
   PLAYER_ANGULAR_DECELERATION,
   CAMERA_TIME_AHEAD,
+  CAMERA_LERP_WEIGHT,
 } from './constants';
 import './style.css';
 import { DOWN, TAU } from './utils/math';
@@ -183,9 +184,11 @@ window.onload = async () => {
         const displacement = vectorPool
           .getCopy(player.velocity)
           .multiplyScalar(CAMERA_TIME_AHEAD);
+        const target = vectorPool
+          .getCopy(player.position)
+          .add(displacement);
         camera.position
-          .copy(player.position)
-          .add(displacement)
+          .lerp(target, CAMERA_LERP_WEIGHT)
         camera.position.toObservablePoint(stage.pivot);
       }
     });

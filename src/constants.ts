@@ -10,7 +10,7 @@ export const PLAYER_MAX_ANGULAR_SPEED = .7;
 /** Player's acceleration when flighting */
 export const PLAYER_ACCELERATION = 900;
 /** Player's max speed when flighting */
-export const PLAYER_MAX_SPEED = 500;
+export const PLAYER_MAX_SPEED = 400;
 /** Player's deceleration */
 export const PLAYER_DECELERATION = 250;
 
@@ -22,4 +22,9 @@ based on the current player velocity and looks
 at that position to give the player a better view
 of what's coming.
 */
-export const CAMERA_TIME_AHEAD = 1/10;
+export const CAMERA_TIME_AHEAD = 1 / 7;
+/**
+Linear interpolation weight for the camera to
+move towards its target
+*/
+export const CAMERA_LERP_WEIGHT = 0.5;
