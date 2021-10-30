@@ -48,10 +48,13 @@ export class VectorPool {
   /**
   Provides a vector, by either recycling an inactive
   one, or allocating one if there are no inactive
-  vectors in the pool.
+  vectors in the pool. The vector is initialized
+  with the `x`, `y` parameters
   @returns The provided vector.
+  @param x The value for the x component.
+  @param y The value for the y component.
   */
-  get(x = 0, y = 0) {
+  new(x = 0, y = 0) {
     this._count++
     if (this.size < this.count) {
       this._pool.push(new Vector2D());
@@ -60,30 +63,30 @@ export class VectorPool {
   }
 
   /**
-  Provides a vector and copies the values from another.
+  Provides a vector that's a copy of another.
   @param vector The vector to copy from.
   @returns The provided vector.
   */
-  getCopy(vector: Vector2D) {
-    return this.get().copy(vector);
+  copy(vector: Vector2D) {
+    return this.new().copy(vector);
   }
 
   /**
-  Provides a vector and initializes it from a given angle.
+  Provides a vector from a given angle.
   @param angle The angle to initialize the vector from.
   @returns The provided vector.
   */
-  getFromAngle(angle: number) {
-    return this.get().fromAngle(angle);
+  fromAngle(angle: number) {
+    return this.new().fromAngle(angle);
   }
 
   /**
-  Provides a vector and initializes it from an ObservablePoint.
+  Provides a vector from an ObservablePoint.
   @param point The ObservablePoint to initialize the vector from.
   @returns The provided vector.
   */
-  getFromObservablePoint(point: ObservablePoint) {
-    return this.get().fromObservablePoint(point);
+  fromObservablePoint(point: ObservablePoint) {
+    return this.new().fromObservablePoint(point);
   }
 
   /**

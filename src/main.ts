@@ -17,7 +17,6 @@ import {
   PLAYER_ANGULAR_ACCELERATION,
   PLAYER_ANGULAR_DECELERATION,
   CAMERA_TIME_AHEAD,
-  CAMERA_LERP_WEIGHT,
 } from './constants';
 import './style.css';
 import { DOWN, TAU } from './utils/math';
@@ -155,7 +154,7 @@ window.onload = async () => {
 
           /* accelerate (apply engine force)*/ {
             const deltaVelocity = vectorPool
-              .getFromAngle(player.rotation)
+              .fromAngle(player.rotation)
               .multiplyScalar(PLAYER_ACCELERATION * dt)
 
             player.velocity
@@ -165,7 +164,7 @@ window.onload = async () => {
 
           /* update position */ {
             const displacement = vectorPool
-              .getCopy(player.velocity)
+              .copy(player.velocity)
               .multiplyScalar(dt)
             player.position.add(displacement);
           }
@@ -181,14 +180,10 @@ window.onload = async () => {
         // set the camera position to where the player will be
         // after CAMERA_TIME_AHEAD seconds, based on the player
         // current velocity
-        const displacement = vectorPool
-          .getCopy(player.velocity)
-          .multiplyScalar(CAMERA_TIME_AHEAD);
-        const target = vectorPool
-          .getCopy(player.position)
-          .add(displacement);
         camera.position
-          .lerp(target, CAMERA_LERP_WEIGHT)
+          .copy(player.velocity)
+          .multiplyScalar(CAMERA_TIME_AHEAD)
+          .add(player.position);
         camera.position.toObservablePoint(stage.pivot);
       }
     });

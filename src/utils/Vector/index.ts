@@ -378,7 +378,7 @@ export class Vector2D {
   */
   directionTo(vector: Vector2D) {
     return this.copy(
-      vectorPool.getCopy(vector).subtract(this).normalize()
+      vectorPool.copy(vector).subtract(this).normalize()
     )
   }
 
@@ -391,7 +391,7 @@ export class Vector2D {
   @returns The modified `this` vector.
   */
   reflect(normal: Vector2D) {
-    const normalizedNormal = vectorPool.getCopy(normal).normalize();
+    const normalizedNormal = vectorPool.copy(normal).normalize();
     return this.copy(
       normalizedNormal.
         multiplyScalar(2 * this.dot(normalizedNormal))
@@ -431,7 +431,7 @@ export class Vector2D {
   @result The modified `this` vector.
   */
   moveToward(vector: Vector2D, delta: number) {
-    const distanceVector = vectorPool.getCopy(vector).subtract(this);
+    const distanceVector = vectorPool.copy(vector).subtract(this);
 
     if (distanceVector.length() < delta)
       return this.copy(vector);
@@ -448,7 +448,7 @@ export class Vector2D {
   */
   project(vector: Vector2D) {
     return this.copy(
-      vectorPool.getCopy(vector).multiplyScalar(this.dot(vector) / vector.lengthSq())
+      vectorPool.copy(vector).multiplyScalar(this.dot(vector) / vector.lengthSq())
     );
   }
 

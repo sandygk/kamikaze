@@ -23,8 +23,3 @@ at that position to give the player a better view
 of what's coming.
 */
 export const CAMERA_TIME_AHEAD = 1 / 7;
-/**
-Linear interpolation weight for the camera to
-move towards its target
-*/
-export const CAMERA_LERP_WEIGHT = 0.5;
