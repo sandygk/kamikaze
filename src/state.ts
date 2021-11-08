@@ -1,7 +1,7 @@
 // This file contains all the global state of the game.
 
 import { Application, Sprite } from 'pixi.js';
-import { PLAYER_MAX_SPEED } from './constants';
+import { PLAYER } from './constants';
 import { Player } from './types';
 import { UP } from './utils/math';
 import { Vector2D } from './utils/Vector';
@@ -32,7 +32,7 @@ export const player: Player = {
   position: new Vector2D(),
   angularSpeed: 0,
   rotation: UP,
-  velocity: new Vector2D().setToUp().multiplyScalar(PLAYER_MAX_SPEED),
+  velocity: new Vector2D().setToUp().multiplyScalar(PLAYER.MAX_SPEED),
 };
 
 /** Stores the information of the camera */

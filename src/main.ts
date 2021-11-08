@@ -9,15 +9,7 @@ import {
   player,
   resolution,
 } from './state';
-import {
-  PLAYER_DECELERATION,
-  PLAYER_ACCELERATION,
-  PLAYER_MAX_ANGULAR_SPEED,
-  PLAYER_MAX_SPEED,
-  PLAYER_ANGULAR_ACCELERATION,
-  PLAYER_ANGULAR_DECELERATION,
-  CAMERA_TIME_AHEAD,
-} from './constants';
+import {PLAYER, CAMERA} from './constants';
 import './style.css';
 import { DOWN, TAU } from './utils/math';
 import { vectorPool } from './utils/Vector';
@@ -127,17 +119,17 @@ window.onload = async () => {
           }
           /* accelerate/decelerate rotation */ {
             if (rotationSign) {
-              player.angularSpeed += rotationSign * PLAYER_ANGULAR_ACCELERATION * dt;
+              player.angularSpeed += rotationSign * PLAYER.ANGULAR_ACCELERATION * dt;
             }
             else {
-              const deltaRotationSpeed = Math.sign(player.angularSpeed) * PLAYER_ANGULAR_DECELERATION * dt;
+              const deltaRotationSpeed = Math.sign(player.angularSpeed) * PLAYER.ANGULAR_DECELERATION * dt;
               if (Math.abs(player.angularSpeed) < deltaRotationSpeed) player.angularSpeed = 0;
               else player.angularSpeed -= deltaRotationSpeed;
             }
           }
           /* clamp angular speed */ {
-            if (Math.abs(player.angularSpeed) > PLAYER_MAX_ANGULAR_SPEED)
-              player.angularSpeed = Math.sign(player.angularSpeed) * PLAYER_MAX_ANGULAR_SPEED;
+            if (Math.abs(player.angularSpeed) > PLAYER.MAX_ANGULAR_SPEED)
+              player.angularSpeed = Math.sign(player.angularSpeed) * PLAYER.MAX_ANGULAR_SPEED;
           }
           /* update rotation*/ {
             player.rotation += player.angularSpeed * dt * TAU;
@@ -145,7 +137,7 @@ window.onload = async () => {
         }
         /* update position */ {
           /* decelerate (apply drag force) */ {
-            const deltaVelocity = PLAYER_DECELERATION * dt;
+            const deltaVelocity = PLAYER.DECELERATION * dt;
             if (Math.abs(player.velocity.x) <= deltaVelocity) player.velocity.x = 0;
             else player.velocity.x += -Math.sign(player.velocity.x) * deltaVelocity;
             if (Math.abs(player.velocity.y) <= deltaVelocity) player.velocity.y = 0;
@@ -155,11 +147,11 @@ window.onload = async () => {
           /* accelerate (apply engine force)*/ {
             const deltaVelocity = vectorPool
               .fromAngle(player.rotation)
-              .multiplyScalar(PLAYER_ACCELERATION * dt)
+              .multiplyScalar(PLAYER.ACCELERATION * dt)
 
             player.velocity
               .add(deltaVelocity)
-              .clamp(PLAYER_MAX_SPEED)
+              .clamp(PLAYER.MAX_SPEED)
           }
 
           /* update position */ {
@@ -182,7 +174,7 @@ window.onload = async () => {
         // current velocity
         camera.position
           .copy(player.velocity)
-          .multiplyScalar(CAMERA_TIME_AHEAD)
+          .multiplyScalar(CAMERA.TIME_AHEAD)
           .add(player.position);
         camera.position.toObservablePoint(stage.pivot);
       }
