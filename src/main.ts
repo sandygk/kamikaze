@@ -82,26 +82,26 @@ window.onload = async () => {
         }
       });
     }
-    /* init player sprite */ {
-      const airplaneSprite = new AnimatedSprite([Texture.from('falcon')]);
-      airplaneSprite.loop = true;
-      airplaneSprite.animationSpeed = 0.1;
-      airplaneSprite.play();
-      airplaneSprite.anchor.set(0.5, 0.5);
-      player.sprite = airplaneSprite;
+    /* init player */ {
+      /* init sprite */{
+      player.sprite = new AnimatedSprite([Texture.from('falcon')]);
+      player.sprite.loop = true;
+      player.sprite.animationSpeed = 0.1;
+      player.sprite.play();
+      player.sprite.anchor.set(0.5, 0.5);
+      }
       stage.addChild(player.sprite!);
     }
-    /* init cloud sprites */ {
+    /* init clouds */ {
       for (let i = 0; i < 20000; i++) {
         const cloudIndex = Math.floor(Math.random() * 7);
-        const cloudSprite = new Sprite(Texture.from(`cloud-${cloudIndex}`));
-        cloudSprite.alpha = 0.7;
-        cloudSprites.push(cloudSprite);
-        cloudSprite.position.set(
+        const cloud = new Sprite(Texture.from(`cloud-${cloudIndex}`));
+        cloudSprites.push(cloud);
+        cloud.position.set(
           (Math.random() - 0.5) * resolution.height * 80,
           (Math.random() - 0.5) * resolution.width * 80
         );
-        stage.addChild(cloudSprite);
+        stage.addChild(cloud);
       }
     }
   }

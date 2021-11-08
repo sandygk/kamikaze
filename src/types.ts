@@ -1,9 +1,9 @@
 // This file contains all the types of the game.
 
-import { AnimatedSprite } from 'pixi.js';
+import { AnimatedSprite, Sprite } from 'pixi.js';
 import { Vector2D } from './utils/Vector';
 
-/** Defines all the players' data*/
+/** Contains the data for the player*/
 export type Player = {
   /** Speed at which the player is rotating. */
   angularSpeed: number;
@@ -16,3 +16,13 @@ export type Player = {
   /** The sprite of the player. */
   sprite?: AnimatedSprite;
 };
+
+/** Class to represent the bullet objects in the game*/
+export type Bullet = {
+  /** Direction in which the bullet is moving */
+  direction: number
+  /** Position of the bullet */
+  position: Vector2D;
+  /** Sprite used to render the bullet */
+  sprite?: Sprite;
+}
