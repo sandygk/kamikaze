@@ -1,0 +1,51 @@
+{ "frames": {
+   "spark": {
+    "frame": { "x": 0, "y": 0, "w": 13, "h": 13 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 13, "h": 13 },
+    "sourceSize": { "w": 13, "h": 13 },
+    "duration": 100
+   },
+   "round-fire-no-border": {
+    "frame": { "x": 0, "y": 13, "w": 13, "h": 13 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 13, "h": 13 },
+    "sourceSize": { "w": 13, "h": 13 },
+    "duration": 100
+   },
+   "line-fire-no-border": {
+    "frame": { "x": 0, "y": 26, "w": 13, "h": 13 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 13, "h": 13 },
+    "sourceSize": { "w": 13, "h": 13 },
+    "duration": 100
+   },
+   "round-fire-with-border": {
+    "frame": { "x": 0, "y": 39, "w": 13, "h": 13 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 13, "h": 13 },
+    "sourceSize": { "w": 13, "h": 13 },
+    "duration": 100
+   },
+   "line-fire-with-border": {
+    "frame": { "x": 0, "y": 52, "w": 13, "h": 13 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 13, "h": 13 },
+    "sourceSize": { "w": 13, "h": 13 },
+    "duration": 100
+   }
+ },
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.2.27-x64",
+  "image": "fire.png",
+  "format": "RGBA8888",
+  "size": { "w": 13, "h": 65 },
+  "scale": "1"
+ }
+}

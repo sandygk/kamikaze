@@ -1,12 +1,66 @@
-{
-  "frames": {
-    "cloud": {
-      "frame": { "x": 0, "y": 0, "w": 90, "h": 45 }
-    }
-  },
-  "meta": {
-    "image": "clouds.png",
-    "size": { "w": 300, "h": 298 },
-    "scale": "1"
-  }
+{ "frames": {
+   "cloud-0": {
+    "frame": { "x": 0, "y": 0, "w": 200, "h": 106 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 200, "h": 106 },
+    "sourceSize": { "w": 200, "h": 106 },
+    "duration": 100
+   },
+   "cloud-1": {
+    "frame": { "x": 200, "y": 0, "w": 200, "h": 106 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 200, "h": 106 },
+    "sourceSize": { "w": 200, "h": 106 },
+    "duration": 100
+   },
+   "cloud-2": {
+    "frame": { "x": 0, "y": 106, "w": 200, "h": 106 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 200, "h": 106 },
+    "sourceSize": { "w": 200, "h": 106 },
+    "duration": 100
+   },
+   "cloud-3": {
+    "frame": { "x": 200, "y": 106, "w": 200, "h": 106 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 200, "h": 106 },
+    "sourceSize": { "w": 200, "h": 106 },
+    "duration": 100
+   },
+   "cloud-4": {
+    "frame": { "x": 0, "y": 212, "w": 200, "h": 106 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 200, "h": 106 },
+    "sourceSize": { "w": 200, "h": 106 },
+    "duration": 100
+   },
+   "cloud-5": {
+    "frame": { "x": 200, "y": 212, "w": 200, "h": 106 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 200, "h": 106 },
+    "sourceSize": { "w": 200, "h": 106 },
+    "duration": 100
+   }
+ },
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.2.27-x64",
+  "image": "clouds.png",
+  "format": "RGBA8888",
+  "size": { "w": 400, "h": 318 },
+  "scale": "1",
+  "frameTags": [
+  ],
+  "layers": [
+   { "name": "clouds", "opacity": 190, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
 }

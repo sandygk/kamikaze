@@ -34,7 +34,7 @@ window.onload = async () => {
     head!.appendChild(favicon);
   }
 
-  // destructure app for convenience
+  // destructure app instance for convenience
   const {
     view, screen, stage,
     renderer, loader, ticker,
@@ -73,8 +73,8 @@ window.onload = async () => {
   }
   /* init sprites */{
     const spritePaths = [
-      './assets/airplanes.json',
-      './assets/clouds.json'
+      './assets/aircrafts.json',
+      './assets/clouds.json',
     ];
     /* load textures*/ {
       await new Promise<void>((res) => {
@@ -91,7 +91,7 @@ window.onload = async () => {
       });
     }
     /* init player sprite */ {
-      const airplaneSprite = new AnimatedSprite([Texture.from('airplane')]);
+      const airplaneSprite = new AnimatedSprite([Texture.from('falcon')]);
       airplaneSprite.loop = true;
       airplaneSprite.animationSpeed = 0.1;
       airplaneSprite.play();
@@ -101,8 +101,8 @@ window.onload = async () => {
     }
     /* init cloud sprites */ {
       for (let i = 0; i < 20000; i++) {
-        const cloudSprite = new Sprite(Texture.from('cloud'));
-        cloudSprite.scale.set(2.3);
+        const cloudIndex = Math.floor(Math.random() * 7);
+        const cloudSprite = new Sprite(Texture.from(`cloud-${cloudIndex}`));
         cloudSprite.alpha = 0.7;
         cloudSprites.push(cloudSprite);
         cloudSprite.position.set(
