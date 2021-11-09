@@ -37,7 +37,6 @@ export type Bullet = {
   isEnemyBullet: boolean;
 }
 
-
 /** Parameters of an airplane */
 export type AirplaneParams = {
   /** Angular acceleration when flighting. */
