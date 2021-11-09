@@ -56,10 +56,10 @@ export class VectorPool {
   */
   new(x = 0, y = 0) {
     this._count++
-    if (this.totalLength < this.totalLength) {
+    if (this._count > this.totalLength) {
       this._pool.push(new Vector2D());
     }
-    return this._pool[this.totalLength - 1].set(x, y);
+    return this._pool[this._count - 1].set(x, y);
   }
 
   /**

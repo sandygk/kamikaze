@@ -46,3 +46,6 @@ export const camera = {
 
 /** Pool to manage the memory of the bullet entities. */
 export const bulletPool = new EntityPool<Bullet>();
+
+/** Pool to manage the memory of the enemy entities. */
+export const enemyPool = new EntityPool<Airplane>();

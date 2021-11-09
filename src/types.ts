@@ -40,21 +40,21 @@ export type Bullet = {
 /** Parameters of an airplane */
 export type AirplaneParams = {
   /** Angular acceleration when flighting. */
-  ANGULAR_ACCELERATION : 2,
+  ANGULAR_ACCELERATION : number,
   /** Angular deceleration when flighting. */
-  ANGULAR_DECELERATION : 5 ,
+  ANGULAR_DECELERATION : number ,
   /** Maximum angular speed when flighting. */
-  MAX_ANGULAR_SPEED : .7,
+  MAX_ANGULAR_SPEED : number,
 
   /** Acceleration when flighting. */
-  ACCELERATION : 900,
+  ACCELERATION : number,
   /** Max speed when flighting. */
-  MAX_SPEED : 400,
+  MAX_SPEED : number,
   /** Deceleration force to simulate drag. */
-  DECELERATION : 250,
+  DECELERATION : number,
 
   /** Full health amount. */
-  FULL_HEALTH: 100,
+  FULL_HEALTH: number,
   /** Amount of damage airplanes causes on impact. */
-  DAMAGE_ON_IMPACT : 50,
+  DAMAGE_ON_IMPACT : number,
 }

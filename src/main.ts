@@ -5,15 +5,16 @@ import {
   app,
   bulletPool,
   camera,
+  enemyPool,
   inputs,
   player,
   resolution,
 } from './state';
-import {PLAYER, CAMERA, WEAPONS, BULLETS} from './params';
+import {PLAYER, CAMERA, WEAPONS, BULLETS, ENEMIES} from './params';
 import './style.css';
 import { DOWN, TAU } from './utils/math';
 import { Vector2D, vectorPool } from './utils/Vector';
-import { Bullet } from './types';
+import { Airplane, AirplaneParams, Bullet } from './types';
 
 window.onload = async () => {
   /* set title and favicon*/ {
@@ -64,7 +65,7 @@ window.onload = async () => {
       setInputState(event.key, false);
     });
   }
-  /* init sprites */{
+  /* load sprites */{
     const spritePaths = [
       './assets/aircrafts.json',
       './assets/clouds.json',
@@ -76,7 +77,7 @@ window.onload = async () => {
         loader.load(() => res());
       });
     }
-    /* set scale mode to nearest*/ {
+    /* set scale mode to nearest neighbor*/ {
       spritePaths.forEach((path: string) => {
         const texture = loader.resources[`${path}_image`].texture;
         if (texture) {
@@ -106,71 +107,64 @@ window.onload = async () => {
         stage.addChild(cloud);
       }
     }
+    /* init enemies */ {
+      for (let i = 0; i < 20; i++) {
+        enemyPool.get(() => {
+
+          let position: Vector2D;
+          /* compute initial position */ {
+            position = new Vector2D()
+            .fromAngle(Math.random() * TAU)
+            .multiplyScalar(300);
+          }
+          let sprite: AnimatedSprite;
+          /* init sprite */ {
+            sprite = new AnimatedSprite([Texture.from('hawk')]);
+            sprite.anchor.set(0.5, 0.5);
+            sprite.position.set(position.x, position.y);
+            stage.addChild(sprite);
+          }
+          return {
+            angularSpeed: 0,
+            rotation: Math.random() * TAU,
+            velocity: new Vector2D(),
+            position,
+            sprite,
+            lastBulletTimestamp: 0,
+            health: ENEMIES.FULL_HEALTH,
+            damageOnImpact: ENEMIES.DAMAGE_ON_IMPACT,
+          }
+        });
+      }
+    }
   }
   /* update loop */ {
     ticker.add((dt) => {
       vectorPool.freeAll();
       dt /= 60;
       /* player */ {
-        /* update rotation */ {
-          /* compute input rotation sign */
-          let rotationSign; {
-            rotationSign = 0
-            if (inputs.turnClockwise) rotationSign += 1;
-            if (inputs.turnCounterclockwise) rotationSign -= 1;
-          }
-          /* accelerate/decelerate rotation */ {
-            if (rotationSign) {
-              player.angularSpeed += rotationSign * PLAYER.ANGULAR_ACCELERATION * dt;
-            }
-            else {
-              const deltaRotationSpeed = Math.sign(player.angularSpeed) * PLAYER.ANGULAR_DECELERATION * dt;
-              if (Math.abs(player.angularSpeed) < deltaRotationSpeed) player.angularSpeed = 0;
-              else player.angularSpeed -= deltaRotationSpeed;
-            }
-          }
-          /* clamp angular speed */ {
-            if (Math.abs(player.angularSpeed) > PLAYER.MAX_ANGULAR_SPEED)
-              player.angularSpeed = Math.sign(player.angularSpeed) * PLAYER.MAX_ANGULAR_SPEED;
-          }
-          /* update rotation*/ {
-            player.rotation += player.angularSpeed * dt * TAU;
-          }
+        /* compute input rotation sign */
+        let rotationSign; {
+          rotationSign = 0
+          if (inputs.turnClockwise) rotationSign += 1;
+          if (inputs.turnCounterclockwise) rotationSign -= 1;
         }
-        /* update position */ {
-          /* decelerate (apply drag force) */ {
-            const deltaVelocity = PLAYER.DECELERATION * dt;
-            if (Math.abs(player.velocity.x) <= deltaVelocity) player.velocity.x = 0;
-            else player.velocity.x += -Math.sign(player.velocity.x) * deltaVelocity;
-            if (Math.abs(player.velocity.y) <= deltaVelocity) player.velocity.y = 0;
-            else player.velocity.y += -Math.sign(player.velocity.y) * deltaVelocity;
-          }
-
-          /* accelerate (apply engine force)*/ {
-            const deltaVelocity = vectorPool
-              .fromAngle(player.rotation)
-              .multiplyScalar(PLAYER.ACCELERATION * dt)
-
-            player.velocity
-              .add(deltaVelocity)
-              .clamp(PLAYER.MAX_SPEED)
-          }
-
-          /* update position */ {
-            const displacement = vectorPool
-              .copy(player.velocity)
-              .multiplyScalar(dt)
-            player.position.add(displacement);
-          }
-        }
-        /* update sprite */ {
-          // NOTE: Adding DOWN because the airplane sprites are facing
-          // UP instead of RIGHT, so we need to account for that.
-          player.sprite!.rotation = player.rotation + DOWN;
-          player.sprite!.position.set(player.position.x, player.position.y);
+        updateAirplane(player, PLAYER, rotationSign, dt);
+      }
+      /* enemies */ {
+        enemyPool.startIteration()
+        let enemy: Airplane | null;
+        while (enemy = enemyPool.next()) {
+          const currentDirection = vectorPool
+            .fromAngle(enemy.rotation);
+          const directionTowardsPlayer = vectorPool
+              .copy(enemy.position)
+              .directionTo(player.position);
+          console.log(currentDirection, directionTowardsPlayer);
+          const rotationSign = currentDirection.angleTo(directionTowardsPlayer);
+          updateAirplane(enemy, ENEMIES, rotationSign, dt);
         }
       }
-
       /* bullets */ {
         /* spawn bullets */ {
           if (
@@ -179,9 +173,12 @@ window.onload = async () => {
           ) {
             player.lastBulletTimestamp = Date.now();
             bulletPool.get(() => {
-              const sprite = new Sprite(Texture.from('round-fire-no-border'));
-              sprite.anchor.set(0.5, 0.5);
-              stage.addChild(sprite);
+              let sprite: Sprite
+              /* init sprite */ {
+                sprite = new Sprite(Texture.from('round-fire-no-border'));
+                sprite.anchor.set(0.5, 0.5);
+                stage.addChild(sprite);
+              }
               return {
                 direction: player.rotation,
                 position: new Vector2D().copy(player.position),
@@ -222,3 +219,65 @@ window.onload = async () => {
     });
   }
 };
+
+/**
+Updates the rotation, position and sprite of the given airplane.
+@param airplane The airplane to update.
+@param params The airplane parameters to use.
+@param rotationSign The sign of the rotation, `0` to not rotate,
+`> 0` to rotate clockwise, and `< 0` to rotate counterclockwise.
+@param dt The delta time from the previous tick of the main loop.
+*/
+function updateAirplane(airplane: Airplane, params: AirplaneParams, rotationSign: number, dt: number) {
+  /* update rotation */ {
+    /* accelerate/decelerate rotation */ {
+      if (rotationSign) {
+        airplane.angularSpeed += rotationSign * params.ANGULAR_ACCELERATION * dt;
+      }
+      else {
+        const deltaRotationSpeed = Math.sign(airplane.angularSpeed) * params.ANGULAR_DECELERATION * dt;
+        if (Math.abs(airplane.angularSpeed) < deltaRotationSpeed) airplane.angularSpeed = 0;
+        else airplane.angularSpeed -= deltaRotationSpeed;
+      }
+    }
+    /* clamp angular speed */ {
+      if (Math.abs(airplane.angularSpeed) > params.MAX_ANGULAR_SPEED)
+        airplane.angularSpeed = Math.sign(airplane.angularSpeed) * params.MAX_ANGULAR_SPEED;
+    }
+    /* update rotation*/ {
+      airplane.rotation += airplane.angularSpeed * dt * TAU;
+    }
+  }
+  /* update position */ {
+    /* decelerate (apply drag force) */ {
+      const deltaVelocity = params.DECELERATION * dt;
+      if (Math.abs(airplane.velocity.x) <= deltaVelocity) airplane.velocity.x = 0;
+      else airplane.velocity.x += -Math.sign(airplane.velocity.x) * deltaVelocity;
+      if (Math.abs(airplane.velocity.y) <= deltaVelocity) airplane.velocity.y = 0;
+      else airplane.velocity.y += -Math.sign(airplane.velocity.y) * deltaVelocity;
+    }
+
+    /* accelerate (apply engine force)*/ {
+      const deltaVelocity = vectorPool
+        .fromAngle(airplane.rotation)
+        .multiplyScalar(params.ACCELERATION * dt)
+
+      airplane.velocity
+        .add(deltaVelocity)
+        .clamp(params.MAX_SPEED)
+    }
+
+    /* update position */ {
+      const displacement = vectorPool
+        .copy(airplane.velocity)
+        .multiplyScalar(dt)
+      airplane.position.add(displacement);
+    }
+  }
+  /* update sprite */ {
+    // NOTE: Adding DOWN because the airplane sprites are facing
+    // UP instead of RIGHT, so we need to account for that.
+    airplane.sprite!.rotation = airplane.rotation + DOWN;
+    airplane.sprite!.position.set(airplane.position.x, airplane.position.y);
+  }
+}
