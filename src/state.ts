@@ -1,8 +1,8 @@
 // This file contains all the global state of the game.
 
 import { Application } from 'pixi.js';
-import { PLAYER } from './constants';
-import { Bullet, Player } from './types';
+import { PLAYER } from './params';
+import { Bullet, Airplane } from './types';
 import { UP } from './utils/math';
 import { Vector2D } from './utils/Vector';
 import { EntityPool } from './utils/EntityPool';
@@ -29,12 +29,14 @@ export const inputs = {
 };
 
 /** Player instance. */
-export const player: Player = {
+export const player: Airplane = {
   position: new Vector2D(),
   angularSpeed: 0,
   rotation: UP,
   velocity: new Vector2D().setToUp().multiplyScalar(PLAYER.MAX_SPEED),
   lastBulletTimestamp: 0,
+  health: 100,
+  damageOnImpact: 50,
 };
 
 /** Stores the information of the camera. */

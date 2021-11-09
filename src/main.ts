@@ -9,7 +9,7 @@ import {
   player,
   resolution,
 } from './state';
-import {PLAYER, CAMERA, WEAPON} from './constants';
+import {PLAYER, CAMERA, WEAPONS, BULLETS} from './params';
 import './style.css';
 import { DOWN, TAU } from './utils/math';
 import { Vector2D, vectorPool } from './utils/Vector';
@@ -90,7 +90,6 @@ window.onload = async () => {
       /* init sprite */{
       player.sprite = new AnimatedSprite([Texture.from('falcon')]);
       player.sprite.loop = true;
-      player.sprite.animationSpeed = 0.1;
       player.sprite.play();
       player.sprite.anchor.set(0.5, 0.5);
       }
@@ -176,7 +175,7 @@ window.onload = async () => {
         /* spawn bullets */ {
           if (
             inputs.fire &&
-            Date.now() - player.lastBulletTimestamp > WEAPON.FIRE_COOLDOWN_TIME
+            Date.now() - player.lastBulletTimestamp > WEAPONS.FIRE_COOLDOWN_TIME
           ) {
             player.lastBulletTimestamp = Date.now();
             bulletPool.get(() => {
@@ -187,6 +186,8 @@ window.onload = async () => {
                 direction: player.rotation,
                 position: new Vector2D().copy(player.position),
                 sprite,
+                damageOnImpact: BULLETS.DAMAGE_ON_IMPACT,
+                isEnemyBullet: false,
               }
             })
           }
@@ -198,7 +199,7 @@ window.onload = async () => {
             /* update position */ {
               const displacement = vectorPool
                 .fromAngle(bullet.direction)
-                .multiplyScalar(dt * WEAPON.BULLET_SPEED);
+                .multiplyScalar(dt * BULLETS.SPEED);
               bullet.position.add(displacement);
             }
             /* update sprite */ {
