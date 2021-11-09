@@ -464,6 +464,3 @@ export class Vector2D {
 
 /** Global vector pool to manage the memory allocation of vectors*/
 export const vectorPool = new VectorPool(10);
-
-
-

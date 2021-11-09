@@ -15,6 +15,8 @@ export type Player = {
   readonly position: Vector2D;
   /** The sprite of the player. */
   sprite?: AnimatedSprite;
+  /** Time stamp of the last bullet shot by the player. */
+  lastBulletTimestamp: number;
 };
 
 /** Class to represent the bullet objects in the game*/

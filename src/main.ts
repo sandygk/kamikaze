@@ -3,16 +3,17 @@
 import { AnimatedSprite, SCALE_MODES, Sprite, Texture } from 'pixi.js';
 import {
   app,
+  bulletPool,
   camera,
-  cloudSprites,
   inputs,
   player,
   resolution,
 } from './state';
-import {PLAYER, CAMERA} from './constants';
+import {PLAYER, CAMERA, WEAPON} from './constants';
 import './style.css';
 import { DOWN, TAU } from './utils/math';
-import { vectorPool } from './utils/Vector';
+import { Vector2D, vectorPool } from './utils/Vector';
+import { Bullet } from './types';
 
 window.onload = async () => {
   /* set title and favicon*/ {
@@ -54,7 +55,7 @@ window.onload = async () => {
     const setInputState = (key: string, pressed: boolean) => {
       if (key === 'ArrowLeft') inputs.turnCounterclockwise = pressed;
       if (key === 'ArrowRight') inputs.turnClockwise = pressed;
-      if (key === 'Space') inputs.fire = pressed;
+      if (key === ' ') inputs.fire = pressed;
     };
     window.addEventListener('keydown', (event: any) => {
       setInputState(event.key, true);
@@ -67,6 +68,7 @@ window.onload = async () => {
     const spritePaths = [
       './assets/aircrafts.json',
       './assets/clouds.json',
+      './assets/fire.json',
     ];
     /* load textures*/ {
       await new Promise<void>((res) => {
@@ -82,6 +84,8 @@ window.onload = async () => {
         }
       });
     }
+  }
+  /* init scene */{
     /* init player */ {
       /* init sprite */{
       player.sprite = new AnimatedSprite([Texture.from('falcon')]);
@@ -96,7 +100,6 @@ window.onload = async () => {
       for (let i = 0; i < 20000; i++) {
         const cloudIndex = Math.floor(Math.random() * 7);
         const cloud = new Sprite(Texture.from(`cloud-${cloudIndex}`));
-        cloudSprites.push(cloud);
         cloud.position.set(
           (Math.random() - 0.5) * resolution.height * 80,
           (Math.random() - 0.5) * resolution.width * 80
@@ -107,9 +110,9 @@ window.onload = async () => {
   }
   /* update loop */ {
     ticker.add((dt) => {
-      vectorPool.clear();
+      vectorPool.freeAll();
       dt /= 60;
-      /* update player */ {
+      /* player */ {
         /* update rotation */ {
           /* compute input rotation sign */
           let rotationSign; {
@@ -168,7 +171,44 @@ window.onload = async () => {
           player.sprite!.position.set(player.position.x, player.position.y);
         }
       }
-      /* update camera */ {
+
+      /* bullets */ {
+        /* spawn bullets */ {
+          if (
+            inputs.fire &&
+            Date.now() - player.lastBulletTimestamp > WEAPON.FIRE_COOLDOWN_TIME
+          ) {
+            player.lastBulletTimestamp = Date.now();
+            bulletPool.get(() => {
+              const sprite = new Sprite(Texture.from('round-fire-no-border'));
+              sprite.anchor.set(0.5, 0.5);
+              stage.addChild(sprite);
+              return {
+                direction: player.rotation,
+                position: new Vector2D().copy(player.position),
+                sprite,
+              }
+            })
+          }
+        }
+        /* update bullets */ {
+          bulletPool.startIteration();
+          let bullet: Bullet | null;
+          while (bullet = bulletPool.next()) {
+            /* update position */ {
+              const displacement = vectorPool
+                .fromAngle(bullet.direction)
+                .multiplyScalar(dt * WEAPON.BULLET_SPEED);
+              bullet.position.add(displacement);
+            }
+            /* update sprite */ {
+              bullet.sprite!.rotation = bullet.direction;
+              bullet.sprite!.position.set(bullet.position.x, bullet.position.y);
+            }
+          }
+        }
+      }
+      /* camera */ {
         // set the camera position to where the player will be
         // after CAMERA_TIME_AHEAD seconds, based on the player
         // current velocity

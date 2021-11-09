@@ -31,18 +31,18 @@ export class VectorPool {
   }
 
   /**
-  @returns The total number of allocated vectors
+  @returns The total number of allocated entities,
   i.e. the internal size of the pool.
   */
-  get size() {
-    return this._pool.length
+  get totalLength() {
+    return this._pool.length;
   }
 
   /**
-  @returns The number of active vectors in the pool
+  @returns The number of active entities in the pool.
   */
-  get count() {
-    return this._count
+  get activeCount() {
+    return this._count;
   }
 
   /**
@@ -56,10 +56,10 @@ export class VectorPool {
   */
   new(x = 0, y = 0) {
     this._count++
-    if (this.size < this.count) {
+    if (this.totalLength < this.totalLength) {
       this._pool.push(new Vector2D());
     }
-    return this._pool[this.count - 1].set(x, y);
+    return this._pool[this.totalLength - 1].set(x, y);
   }
 
   /**
@@ -90,10 +90,10 @@ export class VectorPool {
   }
 
   /**
-  Clear the entire pool. The `size` of the pool remains the same
-  but the `count` is reset to 0.
+  Frees all the vectors in the pool.
+  The `totalLength` of the pool remains the same, but the `activeCount` is reset to 0.
   */
-  clear() {
+  freeAll() {
     this._count = 0;
   }
 }

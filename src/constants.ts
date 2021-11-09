@@ -1,23 +1,31 @@
 // This file contains all the global constant values of the game.
 
-/** Constant values relative to the player*/
+/** Constant values or the player. */
 export const PLAYER = {
-  /** Player's angular acceleration when flighting */
-  ANGULAR_ACCELERATION : 2 ,
-  /** Player's angular deceleration when flighting */
+  /** Player's angular acceleration when flighting. */
+  ANGULAR_ACCELERATION : 2,
+  /** Player's angular deceleration when flighting. */
   ANGULAR_DECELERATION : 5 ,
-  /** Player's maximum angular speed when flighting */
-  MAX_ANGULAR_SPEED : .7 ,
+  /** Player's maximum angular speed when flighting. */
+  MAX_ANGULAR_SPEED : .7,
 
-  /** Player's acceleration when flighting */
-  ACCELERATION : 900 ,
-  /** Player's max speed when flighting */
-  MAX_SPEED : 400 ,
+  /** Player's acceleration when flighting. */
+  ACCELERATION : 900,
+  /** Player's max speed when flighting. */
+  MAX_SPEED : 400,
   /** Player's deceleration */
-  DECELERATION : 250 ,
+  DECELERATION : 250,
 }
 
-/** Constant values relative to the camera*/
+/** Constants values of the weapon.  */
+export const WEAPON = {
+  /** Time to wait between shots. */
+  FIRE_COOLDOWN_TIME: 200,
+  /** The speed at which the bullet moves. */
+  BULLET_SPEED: 800,
+}
+
+/** Constant values of the camera. */
 export const CAMERA = {
   /**
   How far ahead in time (seconds) the camera will project the
