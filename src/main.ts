@@ -10,11 +10,17 @@ import {
   player,
   resolution,
 } from './state';
-import {PLAYER, CAMERA, WEAPONS, BULLETS, ENEMIES} from './params';
+import { PLAYER, CAMERA, PLAYER_WEAPON, PLAYER_BULLETS, ENEMIES, ENEMY_BULLETS, ENEMY_WEAPON } from './params';
 import './style.css';
-import { DOWN, TAU } from './utils/math';
+import { DOWN, PI, TAU } from './utils/math';
 import { Vector2D, vectorPool } from './utils/Vector';
 import { Airplane, AirplaneParams, Bullet } from './types';
+
+// destructure app instance for convenience
+const {
+  view, screen, stage,
+  renderer, loader, ticker,
+} = app;
 
 window.onload = async () => {
   /* set title and favicon*/ {
@@ -27,12 +33,6 @@ window.onload = async () => {
     favicon.setAttribute('href', './assets/favicon.ico');
     head!.appendChild(favicon);
   }
-
-  // destructure app instance for convenience
-  const {
-    view, screen, stage,
-    renderer, loader, ticker,
-  } = app;
 
   // add pixi.js view to the body
   document.body.appendChild(view);
@@ -89,10 +89,10 @@ window.onload = async () => {
   /* init scene */{
     /* init player */ {
       /* init sprite */{
-      player.sprite = new AnimatedSprite([Texture.from('falcon')]);
-      player.sprite.loop = true;
-      player.sprite.play();
-      player.sprite.anchor.set(0.5, 0.5);
+        player.sprite = new AnimatedSprite([Texture.from('falcon')]);
+        player.sprite.loop = true;
+        player.sprite.play();
+        player.sprite.anchor.set(0.5, 0.5);
       }
       stage.addChild(player.sprite!);
     }
@@ -108,14 +108,14 @@ window.onload = async () => {
       }
     }
     /* init enemies */ {
-      for (let i = 0; i < 20; i++) {
+      for (let i = 0; i < 10; i++) {
         enemyPool.get(() => {
 
           let position: Vector2D;
           /* compute initial position */ {
             position = new Vector2D()
-            .fromAngle(Math.random() * TAU)
-            .multiplyScalar(300);
+              .fromAngle(Math.random() * TAU)
+              .multiplyScalar(600);
           }
           let sprite: AnimatedSprite;
           /* init sprite */ {
@@ -143,11 +143,15 @@ window.onload = async () => {
       vectorPool.freeAll();
       dt /= 60;
       /* player */ {
-        /* compute input rotation sign */
+
+        /* compute rotation sign */
         let rotationSign; {
           rotationSign = 0
           if (inputs.turnClockwise) rotationSign += 1;
           if (inputs.turnCounterclockwise) rotationSign -= 1;
+        }
+        /* fire bullets */ {
+          if (inputs.fire) attemptToFire(player, false);
         }
         updateAirplane(player, PLAYER, rotationSign, dt);
       }
@@ -155,48 +159,40 @@ window.onload = async () => {
         enemyPool.startIteration()
         let enemy: Airplane | null;
         while (enemy = enemyPool.next()) {
-          const currentDirection = vectorPool
-            .fromAngle(enemy.rotation);
-          const directionTowardsPlayer = vectorPool
+          /* compute rotation sign */
+          let rotationSign: number; {
+            const currentDirection = vectorPool
+              .fromAngle(enemy.rotation);
+            const directionTowardsPlayer = vectorPool
               .copy(enemy.position)
               .directionTo(player.position);
-          console.log(currentDirection, directionTowardsPlayer);
-          const rotationSign = currentDirection.angleTo(directionTowardsPlayer);
-          updateAirplane(enemy, ENEMIES, rotationSign, dt);
+            rotationSign = currentDirection.angleTo(directionTowardsPlayer);
+            if (Math.abs(rotationSign) < PI / 20) rotationSign = 0;
+          }
+          /* update position */ {
+            updateAirplane(enemy, ENEMIES, rotationSign, dt);
+          }
+          /* attempt to fire */ {
+            if (
+              rotationSign === 0 &&
+              enemy.position.distance(player.position) < ENEMY_WEAPON.MAX_SHOOTING_DISTANCE
+            ) {
+              attemptToFire(enemy, true);
+            }
+          }
         }
       }
       /* bullets */ {
-        /* spawn bullets */ {
-          if (
-            inputs.fire &&
-            Date.now() - player.lastBulletTimestamp > WEAPONS.FIRE_COOLDOWN_TIME
-          ) {
-            player.lastBulletTimestamp = Date.now();
-            bulletPool.get(() => {
-              let sprite: Sprite
-              /* init sprite */ {
-                sprite = new Sprite(Texture.from('round-fire-no-border'));
-                sprite.anchor.set(0.5, 0.5);
-                stage.addChild(sprite);
-              }
-              return {
-                direction: player.rotation,
-                position: new Vector2D().copy(player.position),
-                sprite,
-                damageOnImpact: BULLETS.DAMAGE_ON_IMPACT,
-                isEnemyBullet: false,
-              }
-            })
-          }
-        }
+
         /* update bullets */ {
           bulletPool.startIteration();
           let bullet: Bullet | null;
           while (bullet = bulletPool.next()) {
             /* update position */ {
+              const bulletParams = bullet.isEnemyBullet ? ENEMY_BULLETS : PLAYER_BULLETS;
               const displacement = vectorPool
                 .fromAngle(bullet.direction)
-                .multiplyScalar(dt * BULLETS.SPEED);
+                .multiplyScalar(dt * bulletParams.SPEED);
               bullet.position.add(displacement);
             }
             /* update sprite */ {
@@ -279,5 +275,35 @@ function updateAirplane(airplane: Airplane, params: AirplaneParams, rotationSign
     // UP instead of RIGHT, so we need to account for that.
     airplane.sprite!.rotation = airplane.rotation + DOWN;
     airplane.sprite!.position.set(airplane.position.x, airplane.position.y);
+  }
+}
+
+/**
+Attempts to fire a bullet from the given airplane. The bullet
+will be fired unless the cooldown time hasn't been completed yet.
+@param airplane The airplane that shots the bullet
+@param isEnemyAirplane Whether the airplane is an enemy airplane or not
+*/
+function attemptToFire(airplane: Airplane, isEnemyAirplane: boolean) {
+  const bulletParams = isEnemyAirplane ? ENEMY_BULLETS : PLAYER_BULLETS;
+  const weaponParams = isEnemyAirplane ? ENEMY_WEAPON : PLAYER_WEAPON;
+  const spriteName = isEnemyAirplane ? 'round-fire-with-border' : 'round-fire-no-border';
+  if (Date.now() - airplane.lastBulletTimestamp > weaponParams.FIRE_COOLDOWN_TIME) {
+    airplane.lastBulletTimestamp = Date.now();
+    bulletPool.get(() => {
+      let sprite: Sprite
+      /* init sprite */ {
+        sprite = new Sprite(Texture.from(spriteName));
+        sprite.anchor.set(0.5, 0.5);
+        stage.addChild(sprite);
+      }
+      return {
+        direction: airplane.rotation,
+        position: new Vector2D().copy(airplane.position),
+        sprite,
+        damageOnImpact: bulletParams.DAMAGE_ON_IMPACT,
+        isEnemyBullet: isEnemyAirplane,
+      }
+    });
   }
 }

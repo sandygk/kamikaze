@@ -40,21 +40,41 @@ export type Bullet = {
 /** Parameters of an airplane */
 export type AirplaneParams = {
   /** Angular acceleration when flighting. */
-  ANGULAR_ACCELERATION : number,
+  ANGULAR_ACCELERATION: number,
   /** Angular deceleration when flighting. */
-  ANGULAR_DECELERATION : number ,
+  ANGULAR_DECELERATION: number,
   /** Maximum angular speed when flighting. */
-  MAX_ANGULAR_SPEED : number,
+  MAX_ANGULAR_SPEED: number,
 
   /** Acceleration when flighting. */
-  ACCELERATION : number,
+  ACCELERATION: number,
   /** Max speed when flighting. */
-  MAX_SPEED : number,
+  MAX_SPEED: number,
   /** Deceleration force to simulate drag. */
-  DECELERATION : number,
+  DECELERATION: number,
 
   /** Full health amount. */
   FULL_HEALTH: number,
   /** Amount of damage airplanes causes on impact. */
-  DAMAGE_ON_IMPACT : number,
+  DAMAGE_ON_IMPACT: number,
+}
+
+/** Parameters of a bullet. */
+export type BulletParams = {
+  /** The speed at which the bullet moves. */
+  SPEED: number,
+  /** Amount of damage bullet cause on impact*/
+  DAMAGE_ON_IMPACT: number,
+}
+
+/** Parameters of a weapon. */
+export type WeaponParams = {
+  /** Time to wait between shots. */
+  FIRE_COOLDOWN_TIME: number,
+}
+
+/** Parameters of the enemy weapon. */
+export type EnemyWeaponParams = WeaponParams & {
+  /** Maximum distance from the player for the enemy to start shooting */
+  MAX_SHOOTING_DISTANCE: number,
 }
