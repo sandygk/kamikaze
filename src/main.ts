@@ -12,7 +12,7 @@ import {
 } from './state';
 import { PLAYER, CAMERA, PLAYER_WEAPON, PLAYER_BULLETS, ENEMIES, ENEMY_BULLETS, ENEMY_WEAPON } from './params';
 import './style.css';
-import { DOWN, PI, TAU } from './utils/math';
+import { PI, TAU } from './utils/math';
 import { Vector2D, vectorPool } from './utils/Vector';
 import { Airplane, AirplaneParams, Bullet } from './types';
 
