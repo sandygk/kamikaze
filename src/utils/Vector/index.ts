@@ -426,15 +426,17 @@ export class Vector2D {
 
   /**
   Moves `this` vector toward another by the fixed `delta` amount.
-  @param vector The other vector.
+  If `this` vector is closer to the `target` than the `delta` provided,
+  then `this` vector will be moved to the `target` position.
+  @param target The other vector.
   @param delta The amount to move `this` vector by.
   @result The modified `this` vector.
   */
-  moveToward(vector: Vector2D, delta: number) {
-    const distanceVector = vectorPool.copy(vector).subtract(this);
+  moveToward(target: Vector2D, delta: number) {
+    const distanceVector = vectorPool.copy(target).subtract(this);
 
     if (distanceVector.length() < delta)
-      return this.copy(vector);
+      return this.copy(target);
 
     return this.add(
       distanceVector.normalize().multiplyScalar(delta)

@@ -20,7 +20,7 @@ export const ENEMIES: AirplaneParams = {
   ANGULAR_DECELERATION: 100,
   MAX_ANGULAR_SPEED: 1,
   ACCELERATION: 900,
-  MAX_SPEED: 700,
+  MAX_SPEED: 200,
   DECELERATION: 250,
   FULL_HEALTH: 100,
   DAMAGE_ON_IMPACT: 50,
@@ -28,24 +28,24 @@ export const ENEMIES: AirplaneParams = {
 
 /** Parameters of the player weapon. */
 export const PLAYER_WEAPON: WeaponParams = {
-  FIRE_COOLDOWN_TIME: 100,
+  FIRE_COOLDOWN_TIME: 150,
 }
 
 /** Parameters of the enemy weapon. */
 export const ENEMY_WEAPON: EnemyWeaponParams = {
   FIRE_COOLDOWN_TIME: 300,
-  MAX_SHOOTING_DISTANCE: 200,
+  MAX_SHOOTING_DISTANCE: 400,
 }
 
 /** Parameters of the enemy bullets. */
 export const PLAYER_BULLETS: BulletParams = {
-  SPEED: 900,
+  SPEED: 700,
   DAMAGE_ON_IMPACT: 50,
 }
 
 /** Parameters of the enemy bullets. */
 export const ENEMY_BULLETS: BulletParams = {
-  SPEED: 700,
+  SPEED: 450,
   DAMAGE_ON_IMPACT: 50,
 }
 

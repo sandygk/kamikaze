@@ -271,9 +271,7 @@ function updateAirplane(airplane: Airplane, params: AirplaneParams, rotationSign
     }
   }
   /* update sprite */ {
-    // NOTE: Adding DOWN because the airplane sprites are facing
-    // UP instead of RIGHT, so we need to account for that.
-    airplane.sprite!.rotation = airplane.rotation + DOWN;
+    airplane.sprite!.rotation = airplane.rotation;
     airplane.sprite!.position.set(airplane.position.x, airplane.position.y);
   }
 }
