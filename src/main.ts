@@ -98,7 +98,7 @@ window.onload = async () => {
     }
     /* init clouds */ {
       for (let i = 0; i < 20000; i++) {
-        const cloudIndex = Math.floor(Math.random() * 7);
+        const cloudIndex = Math.floor(Math.random() * 6);
         const cloud = new Sprite(Texture.from(`cloud-${cloudIndex}`));
         cloud.position.set(
           (Math.random() - 0.5) * resolution.height * 80,
@@ -132,7 +132,6 @@ window.onload = async () => {
             sprite,
             lastBulletTimestamp: 0,
             health: ENEMIES.FULL_HEALTH,
-            damageOnImpact: ENEMIES.DAMAGE_ON_IMPACT,
           }
         });
       }
@@ -174,7 +173,6 @@ window.onload = async () => {
           }
           /* attempt to fire */ {
             if (
-              rotationSign === 0 &&
               enemy.position.distance(player.position) < ENEMY_WEAPON.MAX_SHOOTING_DISTANCE
             ) {
               attemptToFire(enemy, true);
@@ -203,13 +201,28 @@ window.onload = async () => {
         }
       }
       /* camera */ {
-        // set the camera position to where the player will be
-        // after CAMERA_TIME_AHEAD seconds, based on the player
-        // current velocity
-        camera.position
+        // average the enemy positions
+        enemyPool.startIteration();
+        let enemiesInRangeCount = 0;
+        let enemy;
+        const enemiesInRangeAvgPosition = vectorPool.new();
+        while (enemy = enemyPool.next()) {
+          enemiesInRangeAvgPosition.add(enemy.position)
+          enemiesInRangeCount++;
+        }
+        enemiesInRangeAvgPosition.divideScalar(enemiesInRangeCount);
+
+        // average the average enemy position with the players position in time ahead seconds
+        const targetPosition = vectorPool
           .copy(player.velocity)
           .multiplyScalar(CAMERA.TIME_AHEAD)
-          .add(player.position);
+          .add(player.position)
+        if (enemiesInRangeCount > 0)
+          targetPosition
+            .add(enemiesInRangeAvgPosition)
+            .divideScalar(2);
+        camera.position.copy(player.position)
+          .moveToward(targetPosition, 80);
         camera.position.toObservablePoint(stage.pivot);
       }
     });

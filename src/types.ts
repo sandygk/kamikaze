@@ -19,8 +19,6 @@ export type Airplane = {
   lastBulletTimestamp: number;
   /** Current health of the airplane. */
   health: number;
-  /** Amount of damage the airplane causes on impact. */
-  damageOnImpact: number;
 };
 
 /** Class to represent the bullet objects in the. game*/
@@ -39,23 +37,23 @@ export type Bullet = {
 
 /** Parameters of an airplane */
 export type AirplaneParams = {
-  /** Angular acceleration when flighting. */
+  /** Angular acceleration. */
   ANGULAR_ACCELERATION: number,
-  /** Angular deceleration when flighting. */
+  /** Angular deceleration. */
   ANGULAR_DECELERATION: number,
-  /** Maximum angular speed when flighting. */
+  /** Maximum angular speed. */
   MAX_ANGULAR_SPEED: number,
 
-  /** Acceleration when flighting. */
+  /** Acceleration.*/
   ACCELERATION: number,
-  /** Max speed when flighting. */
+  /** Max speed. */
   MAX_SPEED: number,
   /** Deceleration force to simulate drag. */
   DECELERATION: number,
 
   /** Full health amount. */
   FULL_HEALTH: number,
-  /** Amount of damage airplanes causes on impact. */
+  /** Amount of damage the airplane causes on impact. */
   DAMAGE_ON_IMPACT: number,
 }
 

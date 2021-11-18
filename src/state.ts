@@ -36,7 +36,6 @@ export const player: Airplane = {
   velocity: new Vector2D().setToUp().multiplyScalar(PLAYER.MAX_SPEED),
   lastBulletTimestamp: 0,
   health: 100,
-  damageOnImpact: 50,
 };
 
 /** Stores the information of the camera. */
