@@ -6,7 +6,7 @@ import { AirplaneParams, BulletParams, EnemyWeaponParams, WeaponParams } from ".
 export const PLAYER: AirplaneParams = {
   ANGULAR_ACCELERATION: 2,
   ANGULAR_DECELERATION: 5,
-  MAX_ANGULAR_SPEED: .7,
+  MAX_ANGULAR_SPEED: .8,
   ACCELERATION: 800,
   MAX_SPEED: 300,
   DECELERATION: 250,
@@ -60,5 +60,7 @@ export const CAMERA = {
   at that position to give the player a better view
   of what's coming.
   */
-  TIME_AHEAD: 1 / 7,
+  TIME_AHEAD: 1/7,
+  /** Maximum distance the camera's target can be from the player*/
+  MAX_DISTANCE_FROM_PLAYER: 80,
 }

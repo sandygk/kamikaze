@@ -222,7 +222,7 @@ window.onload = async () => {
             .add(enemiesInRangeAvgPosition)
             .divideScalar(2);
         camera.position.copy(player.position)
-          .moveToward(targetPosition, 80);
+          .moveToward(targetPosition, CAMERA.MAX_DISTANCE_FROM_PLAYER);
         camera.position.toObservablePoint(stage.pivot);
       }
     });
