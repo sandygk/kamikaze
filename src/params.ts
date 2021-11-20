@@ -4,63 +4,63 @@ import { AirplaneParams, BulletParams, EnemyWeaponParams, WeaponParams } from ".
 import { PI } from "./utils/math"
 
 /** Parameter values of the player. */
-export const PLAYER: AirplaneParams = {
-  ANGULAR_ACCELERATION: 2,
-  ANGULAR_DECELERATION: 5,
-  MAX_ANGULAR_SPEED: .8,
-  ACCELERATION: 800,
-  MAX_SPEED: 300,
-  DECELERATION: 250,
-  FULL_HEALTH: 100,
-  DAMAGE_ON_IMPACT: 50,
+export const playerParams: AirplaneParams = {
+  angularAcceleration: 2,
+  angularDeceleration: 5,
+  maxAngularSpeed: .8,
+  acceleration: 800,
+  maxSpeed: 300,
+  deceleration: 250,
+  fullHealth: 100,
+  damageOnImpact: 50,
 }
 
 /** Parameter values of the enemies. */
-export const ENEMIES: AirplaneParams = {
-  ANGULAR_ACCELERATION: 100,
-  ANGULAR_DECELERATION: 100,
-  MAX_ANGULAR_SPEED: .4,
-  ACCELERATION: 500,
-  MAX_SPEED: 400,
-  DECELERATION: 250,
-  FULL_HEALTH: 100,
-  DAMAGE_ON_IMPACT: 50,
+export const enemyParams: AirplaneParams = {
+  angularAcceleration: 100,
+  angularDeceleration: 100,
+  maxAngularSpeed: .4,
+  acceleration: 500,
+  maxSpeed: 400,
+  deceleration: 250,
+  fullHealth: 100,
+  damageOnImpact: 50,
+}
+
+/** Parameters for the sparks. */
+export const sparkParams = {
+  /** Lifetime of a spark in seconds. */
+  lifetime: 1,
 }
 
 /** Parameters of the player weapon. */
-export const SPARK = {
-  FIRE_COOLDOWN_TIME: 150,
-  SPREAD_ANGLE: PI / 20,
-}
-
-/** Parameters of the player weapon. */
-export const PLAYER_WEAPON: WeaponParams = {
-  FIRE_COOLDOWN_TIME: 150,
-  SPREAD_ANGLE: PI / 20,
+export const playerWeaponParams: WeaponParams = {
+  fireCooldownTime: 150,
+  spreadAngle: PI / 20,
 }
 
 /** Parameters of the enemy weapon. */
-export const ENEMY_WEAPON: EnemyWeaponParams = {
-  SPREAD_ANGLE: PI / 10,
-  FIRE_COOLDOWN_TIME: 4000,
-  MAX_SHOOTING_DISTANCE: 300,
+export const enemyWeaponParams: EnemyWeaponParams = {
+  spreadAngle: PI / 10,
+  fireCooldownTime: 4000,
+  maxShootingDistance: 300,
 }
 
 /** Parameters of the enemy bullets. */
-export const PLAYER_BULLETS: BulletParams = {
-  SPEED: 700,
-  DAMAGE_ON_IMPACT: 50,
+export const playerBulletsParams: BulletParams = {
+  speed: 700,
+  damageOnImpact: 50,
 }
 
 /** Parameters of the enemy bullets. */
-export const ENEMY_BULLETS: BulletParams = {
-  SPEED: 450,
-  DAMAGE_ON_IMPACT: 50,
+export const enemyBulletsParams: BulletParams = {
+  speed: 450,
+  damageOnImpact: 50,
 }
 
 
 /** Parameter values of the camera. */
-export const CAMERA = {
+export const cameraParams = {
   /**
   How far ahead in time (seconds) the camera will project the
   player to find its target. The camera computes where
@@ -69,7 +69,7 @@ export const CAMERA = {
   at that position to give the player a better view
   of what's coming.
   */
-  TIME_AHEAD: 1 / 7,
+  timeAhead: 1 / 7,
   /** Maximum distance the camera's target can be from the player*/
-  MAX_DISTANCE_FROM_PLAYER: 80,
+  maxDistanceFromPlayer: 80,
 }

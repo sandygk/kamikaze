@@ -10,7 +10,7 @@ import {
   player,
   resolution,
 } from './state';
-import { PLAYER, CAMERA, PLAYER_WEAPON, PLAYER_BULLETS, ENEMIES, ENEMY_BULLETS, ENEMY_WEAPON } from './params';
+import { playerParams, cameraParams, playerWeaponParams, playerBulletsParams, enemyParams, enemyBulletsParams, enemyWeaponParams } from './params';
 import './style.css';
 import { PI, TAU } from './utils/math';
 import { Vector2D, vectorPool } from './utils/Vector';
@@ -131,7 +131,7 @@ window.onload = async () => {
             position,
             sprite,
             lastBulletTimestamp: 0,
-            health: ENEMIES.FULL_HEALTH,
+            health: enemyParams.fullHealth,
           }
         });
       }
@@ -152,7 +152,7 @@ window.onload = async () => {
         /* fire bullets */ {
           if (inputs.fire) attemptToFire(player, false);
         }
-        updateAirplane(player, PLAYER, rotationSign, dt);
+        updateAirplane(player, playerParams, rotationSign, dt);
       }
       /* enemies */ {
         enemyPool.startIteration()
@@ -169,11 +169,11 @@ window.onload = async () => {
             if (Math.abs(rotationSign) < PI / 20) rotationSign = 0;
           }
           /* update position */ {
-            updateAirplane(enemy, ENEMIES, rotationSign, dt);
+            updateAirplane(enemy, enemyParams, rotationSign, dt);
           }
           /* attempt to fire */ {
             if (
-              enemy.position.distance(player.position) < ENEMY_WEAPON.MAX_SHOOTING_DISTANCE
+              enemy.position.distance(player.position) < enemyWeaponParams.maxShootingDistance
             ) {
               attemptToFire(enemy, true);
             }
@@ -187,10 +187,10 @@ window.onload = async () => {
           let bullet: Bullet | null;
           while (bullet = bulletPool.next()) {
             /* update position */ {
-              const bulletParams = bullet.isEnemyBullet ? ENEMY_BULLETS : PLAYER_BULLETS;
+              const bulletParams = bullet.isEnemyBullet ? enemyBulletsParams : playerBulletsParams;
               const displacement = vectorPool
                 .fromAngle(bullet.direction)
-                .multiplyScalar(dt * bulletParams.SPEED);
+                .multiplyScalar(dt * bulletParams.speed);
               bullet.position.add(displacement);
             }
             /* update sprite */ {
@@ -215,14 +215,14 @@ window.onload = async () => {
         // average the average enemy position with the players position in time ahead seconds
         const targetPosition = vectorPool
           .copy(player.velocity)
-          .multiplyScalar(CAMERA.TIME_AHEAD)
+          .multiplyScalar(cameraParams.timeAhead)
           .add(player.position)
         if (enemiesInRangeCount > 0)
           targetPosition
             .add(enemiesInRangeAvgPosition)
             .divideScalar(2);
         camera.position.copy(player.position)
-          .moveToward(targetPosition, CAMERA.MAX_DISTANCE_FROM_PLAYER);
+          .moveToward(targetPosition, cameraParams.maxDistanceFromPlayer);
         camera.position.toObservablePoint(stage.pivot);
       }
     });
@@ -241,17 +241,17 @@ function updateAirplane(airplane: Airplane, params: AirplaneParams, rotationSign
   /* update rotation */ {
     /* accelerate/decelerate rotation */ {
       if (rotationSign) {
-        airplane.angularSpeed += rotationSign * params.ANGULAR_ACCELERATION * dt;
+        airplane.angularSpeed += rotationSign * params.angularAcceleration * dt;
       }
       else {
-        const deltaRotationSpeed = Math.sign(airplane.angularSpeed) * params.ANGULAR_DECELERATION * dt;
+        const deltaRotationSpeed = Math.sign(airplane.angularSpeed) * params.angularDeceleration * dt;
         if (Math.abs(airplane.angularSpeed) < deltaRotationSpeed) airplane.angularSpeed = 0;
         else airplane.angularSpeed -= deltaRotationSpeed;
       }
     }
     /* clamp angular speed */ {
-      if (Math.abs(airplane.angularSpeed) > params.MAX_ANGULAR_SPEED)
-        airplane.angularSpeed = Math.sign(airplane.angularSpeed) * params.MAX_ANGULAR_SPEED;
+      if (Math.abs(airplane.angularSpeed) > params.maxAngularSpeed)
+        airplane.angularSpeed = Math.sign(airplane.angularSpeed) * params.maxAngularSpeed;
     }
     /* update rotation*/ {
       airplane.rotation += airplane.angularSpeed * dt * TAU;
@@ -259,7 +259,7 @@ function updateAirplane(airplane: Airplane, params: AirplaneParams, rotationSign
   }
   /* update position */ {
     /* decelerate (apply drag force) */ {
-      const deltaVelocity = params.DECELERATION * dt;
+      const deltaVelocity = params.deceleration * dt;
       if (Math.abs(airplane.velocity.x) <= deltaVelocity) airplane.velocity.x = 0;
       else airplane.velocity.x += -Math.sign(airplane.velocity.x) * deltaVelocity;
       if (Math.abs(airplane.velocity.y) <= deltaVelocity) airplane.velocity.y = 0;
@@ -269,11 +269,11 @@ function updateAirplane(airplane: Airplane, params: AirplaneParams, rotationSign
     /* accelerate (apply engine force)*/ {
       const deltaVelocity = vectorPool
         .fromAngle(airplane.rotation)
-        .multiplyScalar(params.ACCELERATION * dt)
+        .multiplyScalar(params.acceleration * dt)
 
       airplane.velocity
         .add(deltaVelocity)
-        .clamp(params.MAX_SPEED)
+        .clamp(params.maxSpeed)
     }
 
     /* update position */ {
@@ -296,10 +296,10 @@ will be fired unless the cooldown time hasn't been completed yet.
 @param isEnemyAirplane Whether the airplane is an enemy airplane or not
 */
 function attemptToFire(airplane: Airplane, isEnemyAirplane: boolean) {
-  const bulletParams = isEnemyAirplane ? ENEMY_BULLETS : PLAYER_BULLETS;
-  const weaponParams = isEnemyAirplane ? ENEMY_WEAPON : PLAYER_WEAPON;
+  const bulletParams = isEnemyAirplane ? enemyBulletsParams : playerBulletsParams;
+  const weaponParams = isEnemyAirplane ? enemyWeaponParams : playerWeaponParams;
   const spriteName = isEnemyAirplane ? 'round-fire-with-border' : 'round-fire-no-border';
-  if (Date.now() - airplane.lastBulletTimestamp > weaponParams.FIRE_COOLDOWN_TIME) {
+  if (Date.now() - airplane.lastBulletTimestamp > weaponParams.fireCooldownTime) {
     airplane.lastBulletTimestamp = Date.now();
     bulletPool.get(() => {
       let sprite: Sprite
@@ -309,10 +309,12 @@ function attemptToFire(airplane: Airplane, isEnemyAirplane: boolean) {
         stage.addChild(sprite);
       }
       return {
-        direction: airplane.rotation + Math.random() * weaponParams.SPREAD_ANGLE - weaponParams.SPREAD_ANGLE / 2,
+        direction: airplane.rotation
+          + Math.random() * weaponParams.spreadAngle
+          - weaponParams.spreadAngle / 2,
         position: new Vector2D().copy(airplane.position),
         sprite,
-        damageOnImpact: bulletParams.DAMAGE_ON_IMPACT,
+        damageOnImpact: bulletParams.damageOnImpact,
         isEnemyBullet: isEnemyAirplane,
       }
     });

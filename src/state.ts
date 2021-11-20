@@ -1,7 +1,7 @@
 // This file contains all the global state of the game.
 
 import { Application } from 'pixi.js';
-import { PLAYER } from './params';
+import { playerParams } from './params';
 import { Bullet, Airplane } from './types';
 import { UP } from './utils/math';
 import { Vector2D } from './utils/Vector';
@@ -33,7 +33,7 @@ export const player: Airplane = {
   position: new Vector2D(),
   angularSpeed: 0,
   rotation: UP,
-  velocity: new Vector2D().setToUp().multiplyScalar(PLAYER.MAX_SPEED),
+  velocity: new Vector2D().setToUp().multiplyScalar(playerParams.maxSpeed),
   lastBulletTimestamp: 0,
   health: 100,
 };
