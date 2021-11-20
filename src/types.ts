@@ -69,6 +69,8 @@ export type BulletParams = {
 export type WeaponParams = {
   /** Time to wait between shots. */
   FIRE_COOLDOWN_TIME: number,
+  /** Bullets direction is randomized within the spread angle. */
+  SPREAD_ANGLE: number,
 }
 
 /** Parameters of the enemy weapon. */

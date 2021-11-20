@@ -1,6 +1,7 @@
 // This file contains the parameters values of the game.
 
 import { AirplaneParams, BulletParams, EnemyWeaponParams, WeaponParams } from "./types"
+import { PI } from "./utils/math"
 
 /** Parameter values of the player. */
 export const PLAYER: AirplaneParams = {
@@ -27,12 +28,20 @@ export const ENEMIES: AirplaneParams = {
 }
 
 /** Parameters of the player weapon. */
+export const SPARK = {
+  FIRE_COOLDOWN_TIME: 150,
+  SPREAD_ANGLE: PI / 20,
+}
+
+/** Parameters of the player weapon. */
 export const PLAYER_WEAPON: WeaponParams = {
   FIRE_COOLDOWN_TIME: 150,
+  SPREAD_ANGLE: PI / 20,
 }
 
 /** Parameters of the enemy weapon. */
 export const ENEMY_WEAPON: EnemyWeaponParams = {
+  SPREAD_ANGLE: PI / 10,
   FIRE_COOLDOWN_TIME: 4000,
   MAX_SHOOTING_DISTANCE: 300,
 }
@@ -60,7 +69,7 @@ export const CAMERA = {
   at that position to give the player a better view
   of what's coming.
   */
-  TIME_AHEAD: 1/7,
+  TIME_AHEAD: 1 / 7,
   /** Maximum distance the camera's target can be from the player*/
   MAX_DISTANCE_FROM_PLAYER: 80,
 }

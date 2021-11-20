@@ -309,7 +309,7 @@ function attemptToFire(airplane: Airplane, isEnemyAirplane: boolean) {
         stage.addChild(sprite);
       }
       return {
-        direction: airplane.rotation,
+        direction: airplane.rotation + Math.random() * weaponParams.SPREAD_ANGLE - weaponParams.SPREAD_ANGLE / 2,
         position: new Vector2D().copy(airplane.position),
         sprite,
         damageOnImpact: bulletParams.DAMAGE_ON_IMPACT,
