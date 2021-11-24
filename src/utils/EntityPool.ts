@@ -28,22 +28,31 @@ export class EntityPool<T> {
   (i.e. currently used in the game scene),
   the rest are inactive.
   */
-  readonly _pool: T[] = [];
+  private readonly _pool: T[] = [];
   /** Current number of active entities*/
   private _count = 0;
   /** Index of the current item in the current iteration over the pool*/
-  private _index= -1;
+  private _index = -1;
+  /** Function to create new entities as needed*/
+  private readonly _createNewEntity: () => T;
+
+  /**
+  Creates and initializes a new instance of the EntityPool class.
+  @param createNewEntity Function to create a new entities as needed.
+  */
+  constructor(createNewEntity: () => T) {
+    this._createNewEntity = createNewEntity;
+  }
 
   /**
   Gets an entity, either from the pool if available
   or from the provided constructor if the pool has no
   inactive entities to recycle.
-  @param makeEntity Function to generate a new entity.
   @returns A recycled or new entity.
   */
-  get(makeEntity: () => T) {
+  get() {
     if (this._pool.length === this.activeCount) {
-      this._pool.push(makeEntity());
+      this._pool.push(this._createNewEntity());
     }
     return this._pool[this._count++];
   }
