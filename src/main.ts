@@ -1,11 +1,9 @@
-// This file contains all the logic of the game.
-
 import { Application, SCALE_MODES } from 'pixi.js';
 import { setInputState } from './input';
 import { vectorPool } from './utils/Vector';
-import { initPlayerAirplane, updatePlayerAirplane } from './entities/Airplane/PlayerAirplane';
-import { initEnemyAirplanes, updateEnemyAirplanes } from './entities/Airplane/EnemyAirplane';
-import { initClouds } from './entities/Cloud';
+import { addPlayerAirplane, updatePlayerAirplane } from './entities/Airplane/PlayerAirplane';
+import { addInitialEnemyAirplanes, updateEnemyAirplanes } from './entities/Airplane/EnemyAirplane';
+import { addClouds } from './entities/Cloud';
 import { updateCamera } from './entities/Camera';
 import { updateBullets } from './entities/Bullet';
 import './style.css';
@@ -16,6 +14,8 @@ export const resolution = {
   height: 360,
 };
 
+// destructure the pixy.js app object
+// to access its fields directly
 export const {
   view, screen, stage,
   renderer, loader, ticker,
@@ -26,16 +26,22 @@ export const {
   antialias: false,
 });
 
-window.onload = async () => {
+/**
+Main function of the game.
+Initializes the game and sets up the update loop.
+*/
+async function main() {
   document.body.appendChild(view);
   setTitleAndFavicon();
   handleResize();
   handleInput();
-  await loadSprites();
+  await loadTextures();
   initScene();
   ticker.add((dt) => updateGame(dt));
-};
+}
+window.onload = main;
 
+/** Sets the title and favicon of the browser tab. */
 function setTitleAndFavicon() {
   document.title = 'kamikaze';
   /* set favicon */ {
@@ -47,8 +53,14 @@ function setTitleAndFavicon() {
   }
 }
 
+/** Handles the logic of resizing the renderer when the screen size changes. */
 function handleResize() {
-  const handleResize = () => {
+  /**
+  * Updates the renderer and stage based on the current window's size.
+  * The function is called at the beginning of the game and every time
+  * the window is resized.
+  */
+  const updateRendererAndStage = () => {
     const heightRatio = window.innerHeight / resolution.height;
     const widthRatio = window.innerWidth / resolution.width;
     const scale = Math.min(heightRatio, widthRatio);
@@ -59,10 +71,14 @@ function handleResize() {
     // place the stage pivot in the center of the screen
     stage.position.set(screen.width / 2, screen.height / 2);
   };
-  handleResize();
-  window.addEventListener('resize', handleResize);
+  updateRendererAndStage();
+  window.addEventListener('resize', updateRendererAndStage);
 }
 
+/**
+Handles the input by updating the `input` state every time
+a key is pressed or released.
+*/
 function handleInput() {
   window.addEventListener('keydown', (event: any) => {
     setInputState(event.key, true);
@@ -72,7 +88,11 @@ function handleInput() {
   });
 }
 
-async function loadSprites() {
+/**
+ Loads all the textures used in the game and
+ sets the scale mode to nearest neighbor.
+ */
+async function loadTextures() {
   const spritePaths = [
     './assets/aircrafts.json',
     './assets/clouds.json',
@@ -96,12 +116,17 @@ async function loadSprites() {
   }
 }
 
+/** Initializes the game scene. */
 function initScene() {
-  initClouds();
-  initPlayerAirplane();
-  initEnemyAirplanes();
+  addClouds();
+  addPlayerAirplane();
+  addInitialEnemyAirplanes();
 }
 
+/**
+Main loop of the game. Updates all the entities
+in the game each frame.
+*/
 function updateGame(dt: number) {
   vectorPool.freeAll();
   dt /= 60;
@@ -109,5 +134,5 @@ function updateGame(dt: number) {
   updatePlayerAirplane(dt);
   updateEnemyAirplanes(dt);
   updateBullets(dt);
-  updateCamera(dt);
+  updateCamera();
 }

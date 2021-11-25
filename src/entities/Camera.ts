@@ -1,6 +1,6 @@
 import { stage } from "../main";
 import { Vector2D, vectorPool } from "../utils/Vector";
-import { enemyPool } from "../entities/Airplane/EnemyAirplane";
+import { enemyAirplanePool } from "../entities/Airplane/EnemyAirplane";
 import { playerAirplane } from "../entities/Airplane/PlayerAirplane";
 
 /** Parameter values of the camera. */
@@ -18,20 +18,20 @@ export const cameraParams = {
   maxDistanceFromPlayer: 80,
 }
 
-
 /** Stores the information of the camera. */
 export const camera = {
+  /** Current position of the camera.*/
   position: new Vector2D(),
 };
 
-
-export function updateCamera(dt: number) {
+/** Updates the camera each frame. */
+export function updateCamera() {
   // average the enemies positions
-  enemyPool.startIteration();
+  enemyAirplanePool.startIteration();
   let enemiesInRangeCount = 0;
   let enemy;
   const enemiesInRangeAvgPosition = vectorPool.new();
-  while (enemy = enemyPool.next()) {
+  while (enemy = enemyAirplanePool.next()) {
     enemiesInRangeAvgPosition.add(enemy.position)
     enemiesInRangeCount++;
   }

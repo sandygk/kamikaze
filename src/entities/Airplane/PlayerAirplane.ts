@@ -18,17 +18,8 @@ export const playerParams: AirplaneParams = {
   damageOnImpact: 50,
 }
 
-/** Player instance. */
-export const playerAirplane: Airplane = {
-  position: new Vector2D(),
-  angularSpeed: 0,
-  rotation: UP,
-  velocity: new Vector2D().setToUp().multiplyScalar(playerParams.maxSpeed),
-  lastBulletTimestamp: 0,
-  health: 100,
-};
-
-export function initPlayerAirplane() {
+/** Adds the player airplane to the scene. */
+export function addPlayerAirplane() {
     /* init sprite */{
     playerAirplane.sprite = new AnimatedSprite([Texture.from('falcon')]);
     playerAirplane.sprite.loop = true;
@@ -38,8 +29,8 @@ export function initPlayerAirplane() {
   stage.addChild(playerAirplane.sprite!);
 }
 
+/** Updates the player airplane each frame. */
 export function updatePlayerAirplane(dt: number) {
-
   /* compute rotation sign */
   let rotationSign; {
     rotationSign = 0
@@ -51,3 +42,13 @@ export function updatePlayerAirplane(dt: number) {
   }
   updateAirplane(playerAirplane, playerParams, rotationSign, dt);
 }
+
+/** Player instance. */
+export const playerAirplane: Airplane = {
+  position: new Vector2D(),
+  angularSpeed: 0,
+  rotation: UP,
+  velocity: new Vector2D().setToUp().multiplyScalar(playerParams.maxSpeed),
+  lastBulletTimestamp: 0,
+  health: 100,
+};

@@ -12,7 +12,6 @@ export type BulletParams = {
   damageOnImpact: number,
 }
 
-
 /** Bullet entity. */
 export class Bullet {
   /** Direction in which the bullet is moving. */
@@ -27,8 +26,8 @@ export class Bullet {
   isEnemyBullet = false;
 }
 
+/** Updates the bullets each frame. */
 export function updateBullets(dt: number) {
-
   /* update bullets */ {
     bulletPool.startIteration();
     let bullet: Bullet | null;
