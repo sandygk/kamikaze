@@ -30,7 +30,7 @@ export class EntityPool<T> {
   */
   private readonly _pool: T[] = [];
   /** Current number of active entities*/
-  private _count = 0;
+  private _activeCount = 0;
   /** Index of the current item in the current iteration over the pool*/
   private _index = -1;
   /** Function to create new entities as needed*/
@@ -54,7 +54,7 @@ export class EntityPool<T> {
     if (this._pool.length === this.activeCount) {
       this._pool.push(this._createNewEntity());
     }
-    return this._pool[this._count++];
+    return this._pool[this._activeCount++];
   }
 
   /**
@@ -69,7 +69,7 @@ export class EntityPool<T> {
   @returns The number of active entities in the pool.
   */
   get activeCount() {
-    return this._count;
+    return this._activeCount;
   }
 
   /**
@@ -77,7 +77,7 @@ export class EntityPool<T> {
   The `totalLength` of the pool remains the same, but the `activeCount` is reset to 0.
   */
   freeAll() {
-    this._count = 0;
+    this._activeCount = 0;
   }
 
   /**
@@ -99,7 +99,7 @@ export class EntityPool<T> {
   @return The next item of active item in the pool or `null` if the end of the pool was reached..
   */
   next() {
-    if(++this._index === this._count)
+    if (++this._index >= this._activeCount)
       return null;
     return this._pool[this._index];
   }
@@ -114,10 +114,10 @@ export class EntityPool<T> {
   on how to iterate over the pool.
   */
   freeCurrent() {
-    if(this._index < 0  || this._index === this.activeCount) return;
-    const aux = this._pool[this.activeCount-1];
-    this._pool[this.activeCount-1] = this._pool[this._index];
+    if (this._index < 0 || this._index === this.activeCount) return;
+    const aux = this._pool[this.activeCount - 1];
+    this._pool[this.activeCount - 1] = this._pool[this._index];
     this._pool[this._index] = aux;
-    this._count--;
+    this._activeCount--;
   }
 }

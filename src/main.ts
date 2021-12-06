@@ -5,7 +5,7 @@ import { addPlayerAirplane, updatePlayerAirplane } from './entities/Airplane/Pla
 import { addInitialEnemyAirplanes, updateEnemyAirplanes } from './entities/Airplane/EnemyAirplane';
 import { addClouds } from './entities/Cloud';
 import { updateCamera } from './entities/Camera';
-import { updateBullets } from './entities/Bullet';
+import { bulletPool, updateBullets } from './entities/Bullet';
 import './style.css';
 
 /** Pixel resolution of the game. */
