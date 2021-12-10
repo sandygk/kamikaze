@@ -7,6 +7,7 @@ import { addClouds } from './entities/Cloud';
 import { updateCamera } from './entities/Camera';
 import { updateBullets } from './entities/Bullet';
 import './style.css';
+import { Spark } from './entities/Spark';
 
 /** Pixel resolution of the game. */
 export const resolution = {
@@ -56,11 +57,11 @@ function setTitleAndFavicon() {
 /** Handles the logic of resizing the renderer when the screen size changes. */
 function handleResize() {
   /**
-  * Updates the renderer and stage based on the current window's size.
-  * The function is called at the beginning of the game and every time
+  * Resizes the renderer and centers the stage based on the current window's
+  * size. The function is called at the beginning of the game and every time
   * the window is resized.
   */
-  const updateRendererAndStage = () => {
+  const resizeRendererAndCenterStage = () => {
     const heightRatio = window.innerHeight / resolution.height;
     const widthRatio = window.innerWidth / resolution.width;
     const scale = Math.min(heightRatio, widthRatio);
@@ -71,8 +72,8 @@ function handleResize() {
     // place the stage pivot in the center of the screen
     stage.position.set(screen.width / 2, screen.height / 2);
   };
-  updateRendererAndStage();
-  window.addEventListener('resize', updateRendererAndStage);
+  resizeRendererAndCenterStage();
+  window.addEventListener('resize', resizeRendererAndCenterStage);
 }
 
 /**
@@ -135,4 +136,5 @@ function updateGame(dt: number) {
   updateEnemyAirplanes(dt);
   updateBullets(dt);
   updateCamera();
+  Spark.updateAll();
 }

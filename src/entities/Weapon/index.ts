@@ -1,7 +1,9 @@
+import { Spark } from "../Spark";
 import { spawnBullet } from "../../entities/Bullet";
 import { Airplane } from "../Airplane";
 import { enemyWeaponParams } from "./EnemyWeapon";
 import { playerWeaponParams } from "./PlayerWeapon";
+import { vectorPool } from "../../utils/Vector";
 
 
 /** Parameters of a weapon. */
@@ -26,6 +28,14 @@ export function attemptToFire(airplane: Airplane, isEnemyAirplane: boolean) {
       airplane.rotation
       + Math.random() * weaponParams.spreadAngle
       - weaponParams.spreadAngle / 2;
-    spawnBullet(airplane.position, direction, isEnemyAirplane);
+    const position = vectorPool
+      .copy(airplane.position)
+      .add(
+        vectorPool
+          .fromAngle(direction)
+          .multiplyScalar(30)
+      );
+    spawnBullet(position, direction, isEnemyAirplane);
+    Spark.spawn(position);
   }
 }

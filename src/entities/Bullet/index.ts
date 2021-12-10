@@ -60,28 +60,26 @@ export function spawnBullet(position: Vector2D, direction: number, isEnemyBullet
 
 /** Updates the bullets each frame. */
 export function updateBullets(dt: number) {
-  /* update bullets */ {
-    bulletPool.startIteration();
-    let bullet: Bullet | null;
-    while (bullet = bulletPool.next()) {
-      /* remove bullet */ {
-        if (Date.now() - bullet.creationTimestamp > Bullet.lifeSpan) {
-          bulletPool.freeCurrent();
-          stage.removeChild(bullet.sprite);
-          continue;
-        }
+  bulletPool.startIteration();
+  let bullet: Bullet | null;
+  while (bullet = bulletPool.next()) {
+    /* remove expired bullets */ {
+      if (Date.now() - bullet.creationTimestamp > Bullet.lifeSpan) {
+        bulletPool.freeCurrent();
+        stage.removeChild(bullet.sprite);
+        continue;
       }
-      /* update position */ {
-        const bulletParams = bullet.params;
-        const displacement = vectorPool
-          .fromAngle(bullet.direction)
-          .multiplyScalar(dt * bulletParams.speed);
-        bullet.position.add(displacement);
-      }
-      /* update sprite */ {
-        bullet.sprite!.rotation = bullet.direction;
-        bullet.sprite!.position.set(bullet.position.x, bullet.position.y);
-      }
+    }
+    /* update position */ {
+      const bulletParams = bullet.params;
+      const displacement = vectorPool
+        .fromAngle(bullet.direction)
+        .multiplyScalar(dt * bulletParams.speed);
+      bullet.position.add(displacement);
+    }
+    /* update sprite */ {
+      bullet.sprite.rotation = bullet.direction;
+      bullet.sprite.position.set(bullet.position.x, bullet.position.y);
     }
   }
 }
