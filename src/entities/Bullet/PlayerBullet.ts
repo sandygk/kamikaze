@@ -5,4 +5,5 @@ export const playerBulletsParams: BulletParams = {
   speed: 700,
   damageOnImpact: 50,
   spriteName: 'round-fire-no-border',
+  isEnemyBullet: false,
 }

@@ -49,7 +49,7 @@ function setTitleAndFavicon() {
     const head = document.querySelector('head');
     const favicon = document.createElement('link');
     favicon.setAttribute('rel', 'shortcut icon');
-    favicon.setAttribute('href', 'playerAirplaneassets/favicon.ico');
+    favicon.setAttribute('href', 'assets/favicon.ico');
     head!.appendChild(favicon);
   }
 }
