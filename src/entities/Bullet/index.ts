@@ -1,13 +1,11 @@
 import { Sprite, Texture } from "pixi.js";
-import { stage } from "../../main";
+import { dt, stage } from "../../main";
 import { EntityPool } from "../../utils/EntityPool";
 import { Vector2D, vectorPool } from "../../utils/Vector";
 import { Airplane } from "../Airplane";
-import { enemyAirplanePool } from "../Airplane/EnemyAirplane";
+import { EnemyAirplane } from "../Airplane/EnemyAirplane";
 import { playerAirplane } from "../Airplane/PlayerAirplane";
-import { Spark } from "../Spark";
-import { enemyBulletsParams } from "./EnemyBullet";
-import { playerBulletsParams } from "./PlayerBullet";
+import { Collisions } from "../../Collisions";
 
 /** Parameters of a bullet. */
 export type BulletParams = {
@@ -25,6 +23,24 @@ export type BulletParams = {
 export class Bullet {
   /** Life span in milliseconds of a bullet. */
   static readonly lifeSpan = 4000;
+  /** The radius of a bullet*/
+  static radius = 10;
+  /** Pool to manage the memory of the bullet entities. */
+  static pool = new EntityPool<Bullet>(() => new Bullet());
+  /** Parameters of the enemy bullets. */
+  static enemyParams: BulletParams = {
+    speed: 450,
+    damageOnImpact: 50,
+    spriteName: 'round-fire-with-border',
+    isEnemyBullet: true,
+  }
+  /** Parameters of the enemy bullets. */
+  static playerParams = {
+    speed: 700,
+    damageOnImpact: 50,
+    spriteName: 'round-fire-no-border',
+    isEnemyBullet: false,
+  }
 
   /** Direction in which the bullet is moving. */
   direction = 0;
@@ -35,96 +51,87 @@ export class Bullet {
   /** Amount of damage the bullet causes on impact. */
   damageOnImpact = 0;
   /** Params for the given type of bullet. */
-  params: BulletParams = enemyBulletsParams;
+  params?: BulletParams;
   /** Timestamp when the bullet was spawned. */
   creationTimestamp = 0;
-
-  /** The radius of a bullet*/
-  static radius = 10;
 
   /** Initializes an instance of the Bullet class*/
   constructor() {
     this.sprite.anchor.set(0.5, 0.5);
   }
-}
 
-/**
-Spawns a bullet in the scene based on the given arguments.
-@param position The position where the bullet should be spawned.
-@param direction The direction of the bullet.
-@param isEnemyBullet Whether the bullet is an enemy's or a player's bullet.
-*/
-export function spawnBullet(position: Vector2D, direction: number, isEnemyBullet: boolean) {
-  const bulletParams = isEnemyBullet ? enemyBulletsParams : playerBulletsParams;
-  const bullet = bulletPool.get();
+  /**
+  Init and adds the bullet to the scene.
+  @param position The position where the bullet should be spawned.
+  @param direction The direction of the bullet.
+  @param isEnemyBullet Whether the bullet is an enemy's or a player's bullet.
+  */
+  static spawn(position: Vector2D, direction: number, isEnemyBullet: boolean) {
+    const bulletParams = isEnemyBullet ? Bullet.enemyParams : Bullet.playerParams;
+    const bullet = Bullet.pool.get();
 
-  bullet.direction = direction;
-  bullet.position.copy(position);
-  bullet.sprite.texture = Texture.from(bulletParams.spriteName);
-  bullet.params = bulletParams;
-  bullet.creationTimestamp = Date.now();
+    bullet.direction = direction;
+    bullet.position.copy(position);
+    bullet.sprite.texture = Texture.from(bulletParams.spriteName);
+    bullet.params = bulletParams;
+    bullet.creationTimestamp = Date.now();
 
-  stage.addChild(bullet.sprite);
-}
+    stage.addChild(bullet.sprite);
+  }
 
-export function removeBullet(bullet: Bullet) {
-  bulletPool.freeCurrent();
-  stage.removeChild(bullet.sprite);
-}
+  /**
+  Frees and remove the bullet from the scene.
+  It must be called only when iterating the bullet pool
+  since it frees the current bullet in the iteration
+  */
+  free() {
+    Bullet.pool.freeCurrent();
+    stage.removeChild(this.sprite);
+  }
 
-/** Updates the bullets each frame. */
-export function updateBullets(dt: number) {
-  bulletPool.startIteration();
-  let bullet: Bullet | null;
-  while (bullet = bulletPool.next()) {
-    /* update position */ {
-      const bulletParams = bullet.params;
-      const displacement = vectorPool
-        .fromAngle(bullet.direction)
-        .multiplyScalar(dt * bulletParams.speed);
-      bullet.position.add(displacement);
-    }
-
-    /* update sprite */ {
-      bullet.sprite.rotation = bullet.direction;
-      bullet.sprite.position.set(bullet.position.x, bullet.position.y);
-    }
-    /* remove expired bullets */ {
-      if (Date.now() - bullet.creationTimestamp > Bullet.lifeSpan) {
-        removeBullet(bullet);
-        continue; // the bullet got removed
+  /** Updates the bullets each frame. */
+  static updateAll() {
+    Bullet.pool.startIteration();
+    let bullet: Bullet | null;
+    while (bullet = Bullet.pool.next()) {
+      /* update position */ {
+        const displacement = vectorPool
+          .fromAngle(bullet.direction)
+          .multiplyScalar(dt * bullet.params!.speed);
+        bullet.position.add(displacement);
       }
-    }
-    /* check collision */ {
-      if (bullet.params.isEnemyBullet &&
-        bulletAirplaneCollision(bullet, playerAirplane)) {
-        continue; // the bullet got removed
+
+      /* update sprite */ {
+        bullet.sprite.rotation = bullet.direction;
+        bullet.sprite.position.set(bullet.position.x, bullet.position.y);
       }
-      else if (!bullet.params.isEnemyBullet) {
-        let collisionFound = false;
-        enemyAirplanePool.startIteration()
-        let enemyAirplane: Airplane | null;
-        while (enemyAirplane = enemyAirplanePool.next()) {
-          if(bulletAirplaneCollision(bullet, enemyAirplane)) {
-            collisionFound = true;
-            break;
-          }
+      /* remove expired bullets */ {
+        if (Date.now() - bullet.creationTimestamp > Bullet.lifeSpan) {
+          bullet.free();
+          continue;
         }
-        if (collisionFound)
-          continue; // the bullet got removed
+      }
+      /* check collision */ {
+        if (bullet.params!.isEnemyBullet &&
+          Collisions.bulletAirplane(bullet, playerAirplane)) {
+          continue;
+        }
+        else if (!bullet.params!.isEnemyBullet) {
+          let collisionFound = false;
+          EnemyAirplane.pool.startIteration()
+          let enemyAirplane: Airplane | null;
+          while (enemyAirplane = EnemyAirplane.pool.next()) {
+            if (Collisions.bulletAirplane(bullet, enemyAirplane)) {
+              collisionFound = true;
+              break;
+            }
+          }
+          if (collisionFound)
+            continue;
+        }
       }
     }
   }
 }
 
-export function bulletAirplaneCollision(bullet: Bullet, airplane: Airplane) {
-  if (bullet.position.distance(airplane.position) < 10) {
-    Spark.spawn(bullet.position);
-    removeBullet(bullet);
-    return true;
-  }
-  return false;
-}
 
-/** Pool to manage the memory of the bullet entities. */
-export const bulletPool = new EntityPool<Bullet>(() => new Bullet());

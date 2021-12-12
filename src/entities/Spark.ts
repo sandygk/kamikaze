@@ -7,23 +7,25 @@ import { stage } from "../main";
 /** Sparks are spawned when the bullet are fired and when they hit a target. */
 export class Spark {
   /** Life span of a spark in milliseconds. */
-  static lifeSpan = 80;
+  static readonly lifeSpan = 80;
   /** Pool to manage the memory of the spark entities. */
   static readonly pool = new EntityPool<Spark>(() => new Spark());
 
-  /**Position of the spark. */
+  /** Position of the spark. */
   position = new Vector2D();
-  /**Position of the spark. */
+  /** Position of the spark. */
   velocity = new Vector2D();
-  /**Timestamp of the moment when the spark was created. */
+  /** Timestamp of the moment when the spark was created. */
   spawnTimestamp = 0;
-  /**Sprite for the spark.*/
+  /** Sprite for the spark.*/
   sprite = new Sprite(Texture.from('spark'));
 
+  /** Creates a new instance of the Spark class. */
   constructor() {
     this.sprite.anchor.set(0.5, 0.5);
   }
 
+  /** Initializes the spark. */
   static spawn(position: Vector2D) {
     const spark = Spark.pool.get();
 
@@ -34,6 +36,7 @@ export class Spark {
     stage.addChild(spark.sprite);
   }
 
+  /** Updates all the sparks in the scene. */
   static updateAll() {
     Spark.pool.startIteration();
     let spark: Spark | null;
@@ -42,6 +45,7 @@ export class Spark {
         if (Date.now() - spark.spawnTimestamp > Spark.lifeSpan) {
           Spark.pool.freeCurrent();
           stage.removeChild(spark.sprite);
+          continue;
         }
       }
     }

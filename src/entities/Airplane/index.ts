@@ -1,24 +1,8 @@
 import { AnimatedSprite } from "pixi.js";
+import { dt } from "../../main";
 import { TAU } from "../../utils/math";
 import { Vector2D, vectorPool } from "../../utils/Vector";
-
-/** Airplane entity. */
-export class Airplane {
-  /** Speed at which the airplane is rotating. */
-  angularSpeed = 0;
-  /** Angle of rotation of the airplane. */
-  rotation = 0;
-  /** The velocity at which the airplane is moving. */
-  readonly velocity = new Vector2D();
-  /** The position of the airplane. */
-  readonly position = new Vector2D();
-  /** The sprite of the airplane. */
-  sprite?: AnimatedSprite;
-  /** Time stamp of the last bullet shot by the airplane. */
-  lastBulletTimestamp = 0;
-  /** Current health of the airplane. */
-  health = 0;
-}
+import { Weapon } from "../Weapon";
 
 /** Parameters of an airplane */
 export type AirplaneParams = {
@@ -40,65 +24,89 @@ export type AirplaneParams = {
   fullHealth: number,
   /** Amount of damage the airplane causes on impact. */
   damageOnImpact: number,
+
+  /** Whether the airplane is an enemy airplane or not*/
+  isEnemyAirplane: boolean;
 }
 
-/**
-Updates the rotation, position and sprite of the given airplane.
-@param airplane The airplane to update.
-@param params The airplane parameters to use.
-@param rotationSign The sign of the rotation, `0` to not rotate,
-`> 0` to rotate clockwise, and `< 0` to rotate counterclockwise.
-@param dt The delta time from the previous tick of the main loop.
-*/
-export function updateAirplane(airplane: Airplane, params: AirplaneParams, rotationSign: number, dt: number) {
-  /* update rotation */ {
-    /* accelerate/decelerate rotation */ {
-      if (rotationSign) {
-        airplane.angularSpeed += rotationSign * params.angularAcceleration * dt;
+/** Airplane entity. */
+export abstract class Airplane {
+  /** Speed at which the airplane is rotating. */
+  angularSpeed = 0;
+  /** Angle of rotation of the airplane. */
+  rotation = 0;
+  /** The velocity at which the airplane is moving. */
+  readonly velocity = new Vector2D();
+  /** The position of the airplane. */
+  readonly position = new Vector2D();
+  /** The sprite of the airplane. */
+  sprite?: AnimatedSprite;
+  /** Time stamp of the last bullet shot by the airplane. */
+  lastBulletTimestamp = 0;
+  /** Current health of the airplane. */
+  health = 0;
+  /** The airplane weapon. */
+  weapon?: Weapon;
+
+  /** Parameters that define a set of airplanes*/
+  abstract params: AirplaneParams;
+
+  /**
+  Updates the rotation, position and sprite of the given airplane.
+  @param rotationSign The sign of the rotation, `0` to not rotate,
+  `> 0` to rotate clockwise, and `< 0` to rotate counterclockwise.
+  */
+  move(rotationSign: number) {
+    /* update rotation */ {
+      /* accelerate/decelerate rotation */ {
+        if (rotationSign) {
+          this.angularSpeed += rotationSign * this.params.angularAcceleration * dt;
+        }
+        else {
+          const deltaRotationSpeed = Math.sign(this.angularSpeed) * this.params.angularDeceleration * dt;
+          if (Math.abs(this.angularSpeed) < deltaRotationSpeed) this.angularSpeed = 0;
+          else this.angularSpeed -= deltaRotationSpeed;
+        }
       }
-      else {
-        const deltaRotationSpeed = Math.sign(airplane.angularSpeed) * params.angularDeceleration * dt;
-        if (Math.abs(airplane.angularSpeed) < deltaRotationSpeed) airplane.angularSpeed = 0;
-        else airplane.angularSpeed -= deltaRotationSpeed;
+      /* clamp angular speed */ {
+        if (Math.abs(this.angularSpeed) > this.params.maxAngularSpeed)
+          this.angularSpeed = Math.sign(this.angularSpeed) * this.params.maxAngularSpeed;
+      }
+      /* update rotation*/ {
+        this.rotation += this.angularSpeed * dt * TAU;
       }
     }
-    /* clamp angular speed */ {
-      if (Math.abs(airplane.angularSpeed) > params.maxAngularSpeed)
-        airplane.angularSpeed = Math.sign(airplane.angularSpeed) * params.maxAngularSpeed;
-    }
-    /* update rotation*/ {
-      airplane.rotation += airplane.angularSpeed * dt * TAU;
-    }
-  }
-  /* update position */ {
-    /* decelerate (apply drag force) */ {
-      const deltaVelocity = params.deceleration * dt;
-      if (Math.abs(airplane.velocity.x) <= deltaVelocity) airplane.velocity.x = 0;
-      else airplane.velocity.x += -Math.sign(airplane.velocity.x) * deltaVelocity;
-      if (Math.abs(airplane.velocity.y) <= deltaVelocity) airplane.velocity.y = 0;
-      else airplane.velocity.y += -Math.sign(airplane.velocity.y) * deltaVelocity;
-    }
-
-    /* accelerate (apply engine force)*/ {
-      const deltaVelocity = vectorPool
-        .fromAngle(airplane.rotation)
-        .multiplyScalar(params.acceleration * dt)
-
-      airplane.velocity
-        .add(deltaVelocity)
-        .clamp(params.maxSpeed)
-    }
-
     /* update position */ {
-      const displacement = vectorPool
-        .copy(airplane.velocity)
-        .multiplyScalar(dt)
-      airplane.position.add(displacement);
+      /* decelerate (apply drag force) */ {
+        const deltaVelocity = this.params.deceleration * dt;
+        if (Math.abs(this.velocity.x) <= deltaVelocity) this.velocity.x = 0;
+        else this.velocity.x += -Math.sign(this.velocity.x) * deltaVelocity;
+        if (Math.abs(this.velocity.y) <= deltaVelocity) this.velocity.y = 0;
+        else this.velocity.y += -Math.sign(this.velocity.y) * deltaVelocity;
+      }
+
+      /* accelerate (apply engine force)*/ {
+        const deltaVelocity = vectorPool
+          .fromAngle(this.rotation)
+          .multiplyScalar(this.params.acceleration * dt)
+
+        this.velocity
+          .add(deltaVelocity)
+          .clamp(this.params.maxSpeed)
+      }
+
+      /* update position */ {
+        const displacement = vectorPool
+          .copy(this.velocity)
+          .multiplyScalar(dt)
+        this.position.add(displacement);
+      }
+    }
+    /* update sprite */ {
+      this.sprite!.rotation = this.rotation;
+      this.sprite!.position.set(this.position.x, this.position.y);
     }
   }
-  /* update sprite */ {
-    airplane.sprite!.rotation = airplane.rotation;
-    airplane.sprite!.position.set(airplane.position.x, airplane.position.y);
-  }
 }
+
 

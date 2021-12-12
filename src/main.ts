@@ -1,13 +1,13 @@
 import { Application, SCALE_MODES } from 'pixi.js';
-import { setInputState } from './input';
+import { Input } from './Input';
 import { vectorPool } from './utils/Vector';
-import { addPlayerAirplane, updatePlayerAirplane } from './entities/Airplane/PlayerAirplane';
-import { addInitialEnemyAirplanes, updateEnemyAirplanes } from './entities/Airplane/EnemyAirplane';
-import { addClouds } from './entities/Cloud';
-import { updateCamera } from './entities/Camera';
-import { updateBullets } from './entities/Bullet';
+import { Cloud } from './entities/Clouds';
+import { Camera } from './entities/Camera';
+import { Bullet } from './entities/Bullet';
 import './style.css';
 import { Spark } from './entities/Spark';
+import { playerAirplane } from './entities/Airplane/PlayerAirplane';
+import { EnemyAirplane } from './entities/Airplane/EnemyAirplane';
 
 /** Pixel resolution of the game. */
 export const resolution = {
@@ -26,6 +26,7 @@ export const {
   height: resolution.height,
   antialias: false,
 });
+export let dt = 0;
 
 /**
 Main function of the game.
@@ -35,10 +36,14 @@ async function main() {
   document.body.appendChild(view);
   setTitleAndFavicon();
   handleResize();
-  handleInput();
+  Input.init();
   await loadTextures();
   initScene();
-  ticker.add((dt) => updateGame(dt));
+  ticker.add((_dt) =>
+  {
+    dt = _dt /= 60;
+    updateGame();
+  });
 }
 window.onload = main;
 
@@ -77,19 +82,6 @@ function handleResize() {
 }
 
 /**
-Handles the input by updating the `input` state every time
-a key is pressed or released.
-*/
-function handleInput() {
-  window.addEventListener('keydown', (event: any) => {
-    setInputState(event.key, true);
-  });
-  window.addEventListener('keyup', (event: KeyboardEvent) => {
-    setInputState(event.key, false);
-  });
-}
-
-/**
  Loads all the textures used in the game and
  sets the scale mode to nearest neighbor.
  */
@@ -119,22 +111,21 @@ async function loadTextures() {
 
 /** Initializes the game scene. */
 function initScene() {
-  addClouds();
-  addPlayerAirplane();
-  addInitialEnemyAirplanes();
+  Cloud.spawnAll();
+  playerAirplane.spawn();
+  EnemyAirplane.spawnAll();
 }
 
 /**
 Main loop of the game. Updates all the entities
 in the game each frame.
 */
-function updateGame(dt: number) {
-  vectorPool.freeAll();
-  dt /= 60;
-
-  updatePlayerAirplane(dt);
-  updateEnemyAirplanes(dt);
-  updateBullets(dt);
-  updateCamera();
+function updateGame() {
+  playerAirplane.update();
+  EnemyAirplane.updateAll();
+  Bullet.updateAll();
   Spark.updateAll();
+  Camera.update();
+
+  vectorPool.freeAll();
 }

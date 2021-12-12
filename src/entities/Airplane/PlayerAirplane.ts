@@ -1,54 +1,54 @@
-import { input } from "../../input";
+import { Input } from "../../Input";
 import { stage } from "../../main";
 import { AnimatedSprite, Texture } from "pixi.js";
 import { UP } from "../../utils/math";
-import { Vector2D } from "../../utils/Vector";
-import { AirplaneParams, Airplane, updateAirplane } from ".";
-import { attemptToFire } from "../../entities/Weapon"
+import { Airplane, AirplaneParams } from ".";
+import { Weapon } from "../Weapon";
 
-/** Parameter values of the player. */
-export const playerParams: AirplaneParams = {
-  angularAcceleration: 2,
-  angularDeceleration: 5,
-  maxAngularSpeed: .8,
-  acceleration: 800,
-  maxSpeed: 300,
-  deceleration: 250,
-  fullHealth: 100,
-  damageOnImpact: 50,
-}
+export class PlayerAirplane extends Airplane {
+  /** Parameters for the player airplanes */
+  static readonly params: AirplaneParams = {
+    angularAcceleration: 2,
+    angularDeceleration: 5,
+    maxAngularSpeed: .8,
+    acceleration: 800,
+    maxSpeed: 300,
+    deceleration: 250,
+    fullHealth: 100,
+    damageOnImpact: 50,
+    isEnemyAirplane: false,
+  };
+  /** Parameters for the player airplanes */
+  readonly params = PlayerAirplane.params;
 
-/** Adds the player airplane to the scene. */
-export function addPlayerAirplane() {
+  /** Inits the player airplane and adds it to the scene. */
+  spawn() {
+    this.rotation = UP;
+    this.velocity.setToUp().multiplyScalar(this.params.maxSpeed);
+    this.health = 100;
+    this.weapon = new Weapon(this);
+
     /* init sprite */{
-    playerAirplane.sprite = new AnimatedSprite([Texture.from('falcon')]);
-    playerAirplane.sprite.loop = true;
-    playerAirplane.sprite.play();
-    playerAirplane.sprite.anchor.set(0.5, 0.5);
+      this.sprite = new AnimatedSprite([Texture.from('falcon')]);
+      this.sprite.loop = true;
+      this.sprite.play();
+      this.sprite.anchor.set(0.5, 0.5);
+    }
+    stage.addChild(this.sprite!);
   }
-  stage.addChild(playerAirplane.sprite!);
+
+  /** Updates the player airplane each frame. */
+  update() {
+    /* compute rotation sign */
+    let rotationSign; {
+      rotationSign = 0
+      if (Input.turnClockwise) rotationSign += 1;
+      if (Input.turnCounterclockwise) rotationSign -= 1;
+    }
+    if (Input.fire) this.weapon!.attemptToFire();
+    this.move(rotationSign);
+  }
 }
 
-/** Updates the player airplane each frame. */
-export function updatePlayerAirplane(dt: number) {
-  /* compute rotation sign */
-  let rotationSign; {
-    rotationSign = 0
-    if (input.turnClockwise) rotationSign += 1;
-    if (input.turnCounterclockwise) rotationSign -= 1;
-  }
-  /* fire bullets */ {
-    if (input.fire) attemptToFire(playerAirplane, false);
-  }
-  updateAirplane(playerAirplane, playerParams, rotationSign, dt);
-}
-
-/** Player instance. */
-export const playerAirplane: Airplane = {
-  position: new Vector2D(),
-  angularSpeed: 0,
-  rotation: UP,
-  velocity: new Vector2D().setToUp().multiplyScalar(playerParams.maxSpeed),
-  lastBulletTimestamp: 0,
-  health: 100,
-};
+/** Player airplane instance */
+export const playerAirplane = new PlayerAirplane();
