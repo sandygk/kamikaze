@@ -1,5 +1,5 @@
 import { Input } from "../../Input";
-import { stage } from "../../main";
+import { Game } from "../../Game";
 import { AnimatedSprite, Texture } from "pixi.js";
 import { UP } from "../../utils/math";
 import { Airplane, AirplaneParams } from ".";
@@ -34,7 +34,7 @@ export class PlayerAirplane extends Airplane {
       this.sprite.play();
       this.sprite.anchor.set(0.5, 0.5);
     }
-    stage.addChild(this.sprite!);
+    Game.stage.addChild(this.sprite!);
   }
 
   /** Updates the player airplane each frame. */

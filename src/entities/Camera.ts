@@ -1,4 +1,4 @@
-import { stage } from "../main";
+import { Game } from "../Game";
 import { Vector2D, vectorPool } from "../utils/Vector";
 import { playerAirplane } from "../entities/Airplane/PlayerAirplane";
 import { EnemyAirplane } from "./Airplane/EnemyAirplane";
@@ -44,7 +44,7 @@ export class Camera {
         .divideScalar(2);
     Camera.position.copy(playerAirplane.position)
       .moveToward(targetPosition, Camera.maxDistanceFromPlayer);
-    Camera.position.toObservablePoint(stage.pivot);
+    Camera.position.toObservablePoint(Game.stage.pivot);
   }
 }
 

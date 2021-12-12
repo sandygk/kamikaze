@@ -2,7 +2,7 @@ import { Vector2D } from "../utils/Vector";
 import { EntityPool } from "../utils/EntityPool"
 import { Sprite } from "@pixi/sprite";
 import { Texture } from "@pixi/core";
-import { stage } from "../main";
+import { Game } from "../Game";
 
 /** Sparks are spawned when the bullet are fired and when they hit a target. */
 export class Spark {
@@ -33,7 +33,7 @@ export class Spark {
     spark.spawnTimestamp = Date.now();
 
     spark.sprite.position.set(spark.position.x, spark.position.y);
-    stage.addChild(spark.sprite);
+    Game.stage.addChild(spark.sprite);
   }
 
   /** Updates all the sparks in the scene. */
@@ -44,7 +44,7 @@ export class Spark {
       /* remove expired sparks */ {
         if (Date.now() - spark.spawnTimestamp > Spark.lifeSpan) {
           Spark.pool.freeCurrent();
-          stage.removeChild(spark.sprite);
+          Game.stage.removeChild(spark.sprite);
           continue;
         }
       }

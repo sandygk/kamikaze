@@ -1,4 +1,3 @@
-// This file contains a set of Math constants and functions.
 
 /** Represents 180 degrees in radians. */
 export const PI = Math.PI;

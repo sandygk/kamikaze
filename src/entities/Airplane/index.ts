@@ -1,5 +1,5 @@
 import { AnimatedSprite } from "pixi.js";
-import { dt } from "../../main";
+import { Game } from "../../Game";
 import { TAU } from "../../utils/math";
 import { Vector2D, vectorPool } from "../../utils/Vector";
 import { Weapon } from "../Weapon";
@@ -60,10 +60,10 @@ export abstract class Airplane {
     /* update rotation */ {
       /* accelerate/decelerate rotation */ {
         if (rotationSign) {
-          this.angularSpeed += rotationSign * this.params.angularAcceleration * dt;
+          this.angularSpeed += rotationSign * this.params.angularAcceleration * Game.dt;
         }
         else {
-          const deltaRotationSpeed = Math.sign(this.angularSpeed) * this.params.angularDeceleration * dt;
+          const deltaRotationSpeed = Math.sign(this.angularSpeed) * this.params.angularDeceleration * Game.dt;
           if (Math.abs(this.angularSpeed) < deltaRotationSpeed) this.angularSpeed = 0;
           else this.angularSpeed -= deltaRotationSpeed;
         }
@@ -73,12 +73,12 @@ export abstract class Airplane {
           this.angularSpeed = Math.sign(this.angularSpeed) * this.params.maxAngularSpeed;
       }
       /* update rotation*/ {
-        this.rotation += this.angularSpeed * dt * TAU;
+        this.rotation += this.angularSpeed * Game.dt * TAU;
       }
     }
     /* update position */ {
       /* decelerate (apply drag force) */ {
-        const deltaVelocity = this.params.deceleration * dt;
+        const deltaVelocity = this.params.deceleration * Game.dt;
         if (Math.abs(this.velocity.x) <= deltaVelocity) this.velocity.x = 0;
         else this.velocity.x += -Math.sign(this.velocity.x) * deltaVelocity;
         if (Math.abs(this.velocity.y) <= deltaVelocity) this.velocity.y = 0;
@@ -88,7 +88,7 @@ export abstract class Airplane {
       /* accelerate (apply engine force)*/ {
         const deltaVelocity = vectorPool
           .fromAngle(this.rotation)
-          .multiplyScalar(this.params.acceleration * dt)
+          .multiplyScalar(this.params.acceleration * Game.dt)
 
         this.velocity
           .add(deltaVelocity)
@@ -98,7 +98,7 @@ export abstract class Airplane {
       /* update position */ {
         const displacement = vectorPool
           .copy(this.velocity)
-          .multiplyScalar(dt)
+          .multiplyScalar(Game.dt)
         this.position.add(displacement);
       }
     }

@@ -1,5 +1,5 @@
 import { Sprite, Texture } from "pixi.js";
-import { dt, stage } from "../../main";
+import { Game } from "../../Game";
 import { EntityPool } from "../../utils/EntityPool";
 import { Vector2D, vectorPool } from "../../utils/Vector";
 import { Airplane } from "../Airplane";
@@ -76,7 +76,7 @@ export class Bullet {
     bullet.params = bulletParams;
     bullet.creationTimestamp = Date.now();
 
-    stage.addChild(bullet.sprite);
+    Game.stage.addChild(bullet.sprite);
   }
 
   /**
@@ -86,7 +86,7 @@ export class Bullet {
   */
   free() {
     Bullet.pool.freeCurrent();
-    stage.removeChild(this.sprite);
+    Game.stage.removeChild(this.sprite);
   }
 
   /** Updates the bullets each frame. */
@@ -97,7 +97,7 @@ export class Bullet {
       /* update position */ {
         const displacement = vectorPool
           .fromAngle(bullet.direction)
-          .multiplyScalar(dt * bullet.params!.speed);
+          .multiplyScalar(Game.dt * bullet.params!.speed);
         bullet.position.add(displacement);
       }
 

@@ -2,7 +2,7 @@ import { Airplane, AirplaneParams } from "./index"
 import { EntityPool } from "../../utils/EntityPool"
 import { AnimatedSprite } from "@pixi/sprite-animated";
 import { Texture } from "@pixi/core";
-import { stage } from "../../main";
+import { Game } from "../../Game";
 import { PI, TAU } from "../../utils/math";
 import { vectorPool } from "../../utils/Vector";
 import { playerAirplane } from "./PlayerAirplane";
@@ -48,7 +48,7 @@ export class EnemyAirplane extends Airplane {
         enemy.sprite = new AnimatedSprite([Texture.from('hawk')]);
         enemy.sprite.anchor.set(0.5, 0.5);
         enemy.sprite.position;
-        stage.addChild(enemy.sprite);
+        Game.stage.addChild(enemy.sprite);
       }
       enemy.angularSpeed = 0;
       enemy.rotation = Math.random() * TAU;
