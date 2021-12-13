@@ -60,6 +60,12 @@ export class EnemyAirplane extends Airplane {
     }
   }
 
+  /** Removes the enemy airplane from the scene. */
+  free() {
+    Game.stage.removeChild(this.sprite!);
+    EnemyAirplane.pool.freeCurrent();
+  }
+
   /** Updates the enemy airplanes each frame. */
   static updateAll() {
     EnemyAirplane.pool.startIteration()

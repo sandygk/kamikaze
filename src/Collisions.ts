@@ -10,10 +10,11 @@ export class Collisions {
   @param airplane The airplane to check for collision against `bullet`.
   @returns A boolean indicating whether there is a collision or not
   */
-  static  bulletAirplane(bullet: Bullet, airplane: Airplane) {
+  static bulletAirplane(bullet: Bullet, airplane: Airplane) {
     if (bullet.position.distance(airplane.position) < 10) {
       Spark.spawn(bullet.position);
       bullet.free();
+      airplane.receiveDamage(bullet.damage);
       return true;
     }
     return false;

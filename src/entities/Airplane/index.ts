@@ -3,6 +3,7 @@ import { Game } from "../../Game";
 import { TAU } from "../../utils/math";
 import { Vector2D, vectorPool } from "../../utils/Vector";
 import { Weapon } from "../Weapon";
+import { EnemyAirplane } from "./EnemyAirplane";
 
 /** Parameters of an airplane */
 export type AirplaneParams = {
@@ -50,6 +51,15 @@ export abstract class Airplane {
 
   /** Parameters that define a set of airplanes*/
   abstract params: AirplaneParams;
+
+
+  receiveDamage(damage: number) {
+    this.health = Math.min(0, this.health - damage);
+    if (this.health === 0)
+      this.free();
+  }
+
+  abstract free(): void;
 
   /**
   Updates the rotation, position and sprite of the given airplane.

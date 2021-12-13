@@ -4,6 +4,7 @@ import { AnimatedSprite, Texture } from "pixi.js";
 import { UP } from "../../utils/math";
 import { Airplane, AirplaneParams } from ".";
 import { Weapon } from "../Weapon";
+import { PassThrough } from "stream";
 
 export class PlayerAirplane extends Airplane {
   /** Parameters for the player airplanes */
@@ -35,6 +36,11 @@ export class PlayerAirplane extends Airplane {
       this.sprite.anchor.set(0.5, 0.5);
     }
     Game.stage.addChild(this.sprite!);
+  }
+
+  /** Handles the logic when the player airplane is dies. */
+  free() {
+    console.log("game over")
   }
 
   /** Updates the player airplane each frame. */

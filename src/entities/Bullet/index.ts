@@ -49,7 +49,7 @@ export class Bullet {
   /** Sprite used to render the bullet. */
   sprite: Sprite = new Sprite();
   /** Amount of damage the bullet causes on impact. */
-  damageOnImpact = 0;
+  damage = 0;
   /** Params for the given type of bullet. */
   params?: BulletParams;
   /** Timestamp when the bullet was spawned. */
