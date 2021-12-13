@@ -4,7 +4,6 @@ import { AnimatedSprite, Texture } from "pixi.js";
 import { UP } from "../../utils/math";
 import { Airplane, AirplaneParams } from ".";
 import { Weapon } from "../Weapon";
-import { PassThrough } from "stream";
 
 export class PlayerAirplane extends Airplane {
   /** Parameters for the player airplanes */
