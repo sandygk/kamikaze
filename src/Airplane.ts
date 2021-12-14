@@ -1,8 +1,8 @@
 import { AnimatedSprite } from "pixi.js";
-import { Game } from "../Game";
-import { TAU } from "../utils/math";
-import { Vector2D, vectorPool } from "../utils/Vector";
-import { Weapon } from "../Weapon";
+import { Game } from "./Game";
+import { TAU } from "./utils/math";
+import { Vector2D, vectorPool } from "./utils/Vector";
+import { Weapon } from "./Weapon";
 
 /** Parameters of an airplane */
 export type AirplaneParams = {
@@ -22,8 +22,6 @@ export type AirplaneParams = {
 
   /** Full health amount. */
   fullHealth: number,
-  /** Amount of damage the airplane causes on impact. */
-  damageOnImpact: number,
 
   /** Whether the airplane is an enemy airplane or not*/
   isEnemyAirplane: boolean;

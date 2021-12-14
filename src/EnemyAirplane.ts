@@ -1,12 +1,12 @@
-import { Airplane, AirplaneParams } from "./index"
-import { EntityPool } from "../utils/EntityPool"
+import { Airplane, AirplaneParams } from "./Airplane"
+import { EntityPool } from "./utils/EntityPool"
 import { AnimatedSprite } from "@pixi/sprite-animated";
 import { Texture } from "@pixi/core";
-import { Game } from "../Game";
-import { PI, TAU } from "../utils/math";
-import { vectorPool } from "../utils/Vector";
+import { Game } from "./Game";
+import { PI, TAU } from "./utils/math";
+import { vectorPool } from "./utils/Vector";
 import { playerAirplane } from "./PlayerAirplane";
-import { Weapon } from "../Weapon";
+import { Weapon } from "./Weapon";
 
 
 /** Parameters of the enemy airplanes. */
@@ -25,10 +25,9 @@ export class EnemyAirplane extends Airplane {
     angularDeceleration: 100,
     maxAngularSpeed: .4,
     acceleration: 500,
-    maxSpeed: 400,
+    maxSpeed: 300,
     deceleration: 250,
     fullHealth: 100,
-    damageOnImpact: 50,
     isEnemyAirplane: true,
     maxShootingDistance: 300,
   };

@@ -1,7 +1,7 @@
 import { Game } from "./Game";
 import { Vector2D, vectorPool } from "./utils/Vector";
-import { playerAirplane } from "./Airplane/PlayerAirplane";
-import { EnemyAirplane } from "./Airplane/EnemyAirplane";
+import { playerAirplane } from "./PlayerAirplane";
+import { EnemyAirplane } from "./EnemyAirplane";
 
 /** Handles the Camera logic*/
 export class Camera {

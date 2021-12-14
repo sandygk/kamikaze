@@ -6,8 +6,8 @@ import { Camera } from './Camera';
 import { Bullet } from './Bullet';
 import './style.css';
 import { Spark } from './Spark';
-import { playerAirplane } from './Airplane/PlayerAirplane';
-import { EnemyAirplane } from './Airplane/EnemyAirplane';
+import { playerAirplane } from './PlayerAirplane';
+import { EnemyAirplane } from './EnemyAirplane';
 
 /** Handle the general logic of the game */
 export class Game {
@@ -25,6 +25,7 @@ export class Game {
     height: Game.resolution.height,
     antialias: false,
   });
+
   /** Pixi.js app's view. */
   static view = Game.app.view;
   /** Pixi.js app's screen. */

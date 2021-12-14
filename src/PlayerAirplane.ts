@@ -1,21 +1,20 @@
-import { Input } from "../Input";
-import { Game } from "../Game";
+import { Input } from "./Input";
+import { Game } from "./Game";
 import { AnimatedSprite, Texture } from "pixi.js";
-import { UP } from "../utils/math";
-import { Airplane, AirplaneParams } from ".";
-import { Weapon } from "../Weapon";
+import { UP } from "./utils/math";
+import { Airplane, AirplaneParams } from "./Airplane";
+import { Weapon } from "./Weapon";
 
 export class PlayerAirplane extends Airplane {
   /** Parameters for the player airplanes */
   static readonly params: AirplaneParams = {
     angularAcceleration: 2,
     angularDeceleration: 5,
-    maxAngularSpeed: .9,
+    maxAngularSpeed: 1,
     acceleration: 800,
-    maxSpeed: 300,
-    deceleration: 250,
+    maxSpeed: 200,
+    deceleration: 200,
     fullHealth: 100,
-    damageOnImpact: 50,
     isEnemyAirplane: false,
   };
   /** Parameters for the player airplanes */

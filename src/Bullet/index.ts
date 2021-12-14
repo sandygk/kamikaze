@@ -3,8 +3,8 @@ import { Game } from "../Game";
 import { EntityPool } from "../utils/EntityPool";
 import { Vector2D, vectorPool } from "../utils/Vector";
 import { Airplane } from "../Airplane";
-import { EnemyAirplane } from "../Airplane/EnemyAirplane";
-import { playerAirplane } from "../Airplane/PlayerAirplane";
+import { EnemyAirplane } from "../EnemyAirplane";
+import { playerAirplane } from "../PlayerAirplane";
 import { Collisions } from "../Collisions";
 
 /** Parameters of a bullet. */
