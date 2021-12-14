@@ -10,7 +10,7 @@ export class PlayerAirplane extends Airplane {
   static readonly params: AirplaneParams = {
     angularAcceleration: 2,
     angularDeceleration: 5,
-    maxAngularSpeed: .8,
+    maxAngularSpeed: .9,
     acceleration: 800,
     maxSpeed: 300,
     deceleration: 250,
