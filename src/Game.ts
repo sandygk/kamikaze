@@ -85,7 +85,7 @@ export class Game {
       Game.stage.scale.y = scale;
 
       // place the stage pivot in the center of the screen
-      Game.stage.position.set(screen.width / 2, screen.height / 2);
+      Game.stage.position.set(Game.screen.width / 2, Game.screen.height / 2);
     };
     resizeRendererAndCenterStage();
     window.addEventListener('resize', resizeRendererAndCenterStage);
