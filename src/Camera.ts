@@ -1,6 +1,6 @@
-import { Game } from "../Game";
-import { Vector2D, vectorPool } from "../utils/Vector";
-import { playerAirplane } from "../entities/Airplane/PlayerAirplane";
+import { Game } from "./Game";
+import { Vector2D, vectorPool } from "./utils/Vector";
+import { playerAirplane } from "./Airplane/PlayerAirplane";
 import { EnemyAirplane } from "./Airplane/EnemyAirplane";
 
 /** Handles the Camera logic*/

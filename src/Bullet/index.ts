@@ -1,11 +1,11 @@
 import { Sprite, Texture } from "pixi.js";
-import { Game } from "../../Game";
-import { EntityPool } from "../../utils/EntityPool";
-import { Vector2D, vectorPool } from "../../utils/Vector";
+import { Game } from "../Game";
+import { EntityPool } from "../utils/EntityPool";
+import { Vector2D, vectorPool } from "../utils/Vector";
 import { Airplane } from "../Airplane";
 import { EnemyAirplane } from "../Airplane/EnemyAirplane";
 import { playerAirplane } from "../Airplane/PlayerAirplane";
-import { Collisions } from "../../Collisions";
+import { Collisions } from "../Collisions";
 
 /** Parameters of a bullet. */
 export type BulletParams = {

@@ -1,6 +1,6 @@
-import { Bullet } from "./entities/Bullet";
-import { Airplane } from "./entities/Airplane";
-import { Spark } from "./entities/Spark";
+import { Bullet } from "./Bullet";
+import { Airplane } from "./Airplane";
+import { Spark } from "./Spark";
 
 /** Class to check for and handle the different collisions between entities. */
 export class Collisions {

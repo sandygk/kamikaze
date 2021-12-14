@@ -1,5 +1,5 @@
 import { Sprite, Texture } from "pixi.js";
-import { Game } from "../Game";
+import { Game } from "./Game";
 
 /**Handle the logic for the background clouds.*/
 export class Cloud {

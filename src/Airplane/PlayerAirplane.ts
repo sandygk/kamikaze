@@ -1,7 +1,7 @@
-import { Input } from "../../Input";
-import { Game } from "../../Game";
+import { Input } from "../Input";
+import { Game } from "../Game";
 import { AnimatedSprite, Texture } from "pixi.js";
-import { UP } from "../../utils/math";
+import { UP } from "../utils/math";
 import { Airplane, AirplaneParams } from ".";
 import { Weapon } from "../Weapon";
 

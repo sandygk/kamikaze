@@ -1,9 +1,8 @@
 import { AnimatedSprite } from "pixi.js";
-import { Game } from "../../Game";
-import { TAU } from "../../utils/math";
-import { Vector2D, vectorPool } from "../../utils/Vector";
+import { Game } from "../Game";
+import { TAU } from "../utils/math";
+import { Vector2D, vectorPool } from "../utils/Vector";
 import { Weapon } from "../Weapon";
-import { EnemyAirplane } from "./EnemyAirplane";
 
 /** Parameters of an airplane */
 export type AirplaneParams = {

@@ -1,8 +1,8 @@
-import { Vector2D } from "../utils/Vector";
-import { EntityPool } from "../utils/EntityPool"
+import { Vector2D } from "./utils/Vector";
+import { EntityPool } from "./utils/EntityPool"
 import { Sprite } from "@pixi/sprite";
 import { Texture } from "@pixi/core";
-import { Game } from "../Game";
+import { Game } from "./Game";
 
 /** Sparks are spawned when the bullet are fired and when they hit a target. */
 export class Spark {

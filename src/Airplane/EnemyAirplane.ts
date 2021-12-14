@@ -1,10 +1,10 @@
 import { Airplane, AirplaneParams } from "./index"
-import { EntityPool } from "../../utils/EntityPool"
+import { EntityPool } from "../utils/EntityPool"
 import { AnimatedSprite } from "@pixi/sprite-animated";
 import { Texture } from "@pixi/core";
-import { Game } from "../../Game";
-import { PI, TAU } from "../../utils/math";
-import { vectorPool } from "../../utils/Vector";
+import { Game } from "../Game";
+import { PI, TAU } from "../utils/math";
+import { vectorPool } from "../utils/Vector";
 import { playerAirplane } from "./PlayerAirplane";
 import { Weapon } from "../Weapon";
 

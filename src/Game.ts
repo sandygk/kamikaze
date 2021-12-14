@@ -1,13 +1,13 @@
 import { Application, SCALE_MODES } from 'pixi.js';
 import { Input } from './Input';
 import { vectorPool } from './utils/Vector';
-import { Cloud } from './entities/Clouds';
-import { Camera } from './entities/Camera';
-import { Bullet } from './entities/Bullet';
+import { Cloud } from './Clouds';
+import { Camera } from './Camera';
+import { Bullet } from './Bullet';
 import './style.css';
-import { Spark } from './entities/Spark';
-import { playerAirplane } from './entities/Airplane/PlayerAirplane';
-import { EnemyAirplane } from './entities/Airplane/EnemyAirplane';
+import { Spark } from './Spark';
+import { playerAirplane } from './Airplane/PlayerAirplane';
+import { EnemyAirplane } from './Airplane/EnemyAirplane';
 
 /** Handle the general logic of the game */
 export class Game {

@@ -1,8 +1,8 @@
 import { Spark } from "../Spark";
-import { Bullet } from "../../entities/Bullet";
+import { Bullet } from "../Bullet";
 import { Airplane } from "../Airplane";
-import { vectorPool } from "../../utils/Vector";
-import { PI } from "../../utils/math";
+import { vectorPool } from "../utils/Vector";
+import { PI } from "../utils/math";
 
 /** Parameters of a weapon. */
 export type WeaponParams = {
