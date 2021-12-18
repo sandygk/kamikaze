@@ -13,7 +13,7 @@ export class Camera {
   at that position to give the playerAirplane a better view
   of what's coming.
   */
-  static timeAhead = 1 / 7;
+  static timeAhead = 1 / 6;
   /** Maximum distance the camera's target can be from the playerAirplane*/
   static maxDistanceFromPlayer = 80;
 
@@ -42,8 +42,12 @@ export class Camera {
       targetPosition
         .add(enemiesInRangeAvgPosition)
         .divideScalar(2);
-    Camera.position.copy(playerAirplane.position)
-      .moveToward(targetPosition, Camera.maxDistanceFromPlayer);
+    const lerpedTargetPosition = vectorPool.copy(Camera.position).lerp(targetPosition, .2 * Game.dt * 60);
+
+    const clampedTargetPosition = vectorPool.copy(playerAirplane.position)
+      .moveToward(lerpedTargetPosition, Camera.maxDistanceFromPlayer);
+
+    Camera.position.copy(clampedTargetPosition);
     Camera.position.toObservablePoint(Game.stage.pivot);
   }
 }
